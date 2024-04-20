@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('register' ,views.register , name='register'),
     path('login' ,views.Login , name='login'),
+    path('' ,views.Login , name='login'), #this rout should be for home page
 
     path('first_interests' ,views.first_interests , name='first_interests'),
     path('next_interests' ,views.next_interests , name='next_interests'),
