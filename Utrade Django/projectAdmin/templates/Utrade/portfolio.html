@@ -1,0 +1,811 @@
+{% extends 'after_base.html' %}
+{% block title %}Portfolio{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+  main .card:hover {
+    transform: scale(1.05);
+  }
+
+  .btn{
+    margin-right: 10px;
+  }
+
+  main {
+  text-align: center;
+ }
+
+ /* .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+    }
+
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 950px;
+      height: 570px;
+      background-color: white;
+      padding: 20px;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid black;
+    }
+
+    .modal-body {
+      padding-top: 20px;
+    }
+
+    .modal-footer {
+      text-align: right;
+    } */
+
+    .selling-btn {
+        margin-top: 5px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: smaller;
+        border: none;
+        color: gray;
+    }
+    .hide-btn{
+        margin-top: 5px;
+        margin-left: 5px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: smaller;
+        border: none;
+    }
+    .CARD_titles{
+      color:rgb(33, 33, 190);
+    }
+    .modal-dialog {
+      max-width: none; 
+      margin-right: 10%; 
+      margin-left: 10%; 
+      /*adjust size of modal*/
+  }
+  .My_modal-body{
+    padding: 3%;
+    background-color :#eef2fa;
+  }
+  .my-widget-container {
+    overflow: hidden; /* Prevent iframes from overflowing */
+  }
+  .edit_icon{
+    padding: 7px;
+    background-color: #ecf1f9;
+    border-radius: 10px;
+  }
+  .edit_icon:hover{
+    color: red;
+  }
+  </style>
+{% endblock content %}
+
+
+{% block content2 %}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+      <h1 style="color:rgb(33, 33, 190); margin-bottom: 30px; margin-top: 13px;"><b>Your Portfolio</b></h1>
+  </div>
+  <!-- End Page Title -->
+
+  <section class="section dashboard">
+
+    <div class="row">
+
+      <!-- Revenue Card -->
+      <div class="col-lg-3 col-sm-6">
+          <div class="card info-card revenue-card">
+              <div class="card-body">
+                  <h5 class="card-title CARD_titles">Total plans:</h5>
+                  <div class="d-flex align-items-center">
+                      <div class="ps-3">
+                          <h6 id="Total_plans">0</h6>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Revenue Card -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="card info-card revenue-card">
+          <div class="card-body">
+              <h5 class="card-title CARD_titles">Amount of gain/loss:</h5>
+              <div class="d-flex align-items-center">
+                  <div class="ps-3">
+                      <h6 id="gain_lose">0$</h6>
+                  </div>
+              </div>
+          </div>
+        </div><!-- End Revenue Card -->
+      </div>
+
+      <!-- Revenue Card -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="card info-card revenue-card">
+            <div class="card-body">
+                <h5 class="card-title CARD_titles">Initial Budget:</h5>
+                <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                        <h6 id="Sum_Budgets">0$</h6>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Revenue Card -->
+      </div>
+
+      <!-- Revenue Card -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="card info-card revenue-card">
+            <div class="card-body">
+                <h5 class="card-title CARD_titles">Current Budget:</h5>
+                <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                        <h6 id="Total_Money_Now">0$</h6>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Revenue Card -->
+      </div>
+
+      <!-- Wallet Card -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="card info-card revenue-card">
+            <div class="card-body">
+                <button class="edit-button btn btn-link float-end" id="editButton">
+                  <i style="margin-right: -25px;" class="fas fa-pencil-alt edit_icon"></i>
+                </button>
+                <h5 style="margin-left: 45px;"class="card-title CARD_titles">Wallet:
+                </h5>
+                <div class="d-flex align-items-center">
+                    <div class="ps-3" style="display: flex;">
+                        <h6 id="wallet" contenteditable="false">0</h6>
+                        <h6 style="margin-right: 10px;">$</h6>
+                    </div>
+                  <button class="btn btn-primary float-end" id="saveButton" style="display:none; margin-left: auto;">SAVE</button>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+    </div>
+
+  </section>
+  
+  <hr>
+
+  <div class="card-container py-5">
+    <div class="row" id="cardContainer">
+
+      
+
+    </div>
+  </div>
+
+  <!-- <button class="btn">Hidden plans</button> -->
+
+  <div style="text-align: left;">
+    <button class="btn" style="margin-left: 0;" onclick="toggleHiddenCardsVisibility()">
+      <i id="arrowIcon" class="fas fa-chevron-right"></i> Hidden plans
+    </button>
+  </div>
+
+  <div id="HiddenCards" style="display: none;">
+    <hr>
+    <h3 style="color:rgb(33, 33, 190); margin-bottom: 30px; margin-top: 13px;">Hidden Plans</h3>
+
+    <div class="card-container py-5">
+      <div class="row" id="cardContainerHidden">
+
+        
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Edit Modal For Wallet-->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog mx-auto modal-sm" style="max-width: 600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Confirm Edit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to change the amount of money in your wallet?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="NO_BTN">No</button>
+                <button type="button" class="btn btn-primary" id="confirmEdit">Yes</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+
+  <!-- Bootstrap modal -->
+  <div class="modal fade" id="sellPlanModal" tabindex="-1" aria-labelledby="sellPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog mx-auto modal-sm" style="max-width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sellPlanModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to sell the plan?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" onclick="handleSellConfirmation()" data-bs-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+</main><!-- End #main -->
+
+{% comment %} first script (getting data from DB) {% endcomment %}
+
+<script>
+  function makeAjaxRequest() {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'GET',
+            url: '/get_plans/',
+            success: function (response) {
+                try {
+                    // Log the raw response for debugging
+                    console.log('Raw Server Response (Plans):', response);
+
+                    // Parse the response assuming it's JSON
+                    const userPlans = JSON.parse(response.plans);
+
+                    // Log the parsed userPlans for debugging
+                    console.log('Parsed User Plans:', userPlans);
+
+                    // Store the plans in localStorage
+                    localStorage.setItem("stockDataArray", JSON.stringify(userPlans));
+
+                    resolve(); // Resolve the promise on successful completion
+                } catch (parseError) {
+                    console.error('Error parsing server response:', parseError);
+                    reject(parseError); // Reject the promise on parse error
+                }
+            },
+            error: function (error) {
+                console.error('Error in AJAX request:', error);
+                reject(error); // Reject the promise on AJAX error
+            }
+        });
+    });
+  }
+
+  function makeAjaxRequest_wallet() {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'GET',
+            url: '/get_wallet/',
+            success: function (response) {
+                try {
+                    // Log the raw response for debugging
+                    console.log('Raw Server Response (Wallet):', response);
+
+                    // Parse the response assuming it's JSON
+                    const wallet = response.wallet;
+
+                    // Log the parsed userPlans for debugging
+                    console.log('Parsed wallet:', wallet);
+
+                    // Store the wallet value in localStorage
+                    localStorage.setItem("wallet", wallet);
+
+                    resolve(); // Resolve the promise on successful completion
+                } catch (parseError) {
+                    console.error('Error parsing server response:', parseError);
+                    reject(parseError); // Reject the promise on parse error
+                }
+            },
+            error: function (error) {
+                console.error('Error in AJAX request:', error);
+                reject(error); // Reject the promise on AJAX error
+            }
+        });
+    });
+  }
+</script>
+
+{% comment %} second script (sending or updating data from DB) {% endcomment %}
+<script>
+  const csrftoken = getCookie('csrftoken');
+
+  //Plans
+  function update_plans(newPlans){
+      const newPlans_string = JSON.stringify(newPlans);
+
+      $.ajax({
+          type: 'POST',
+          url: '/save_plans/',
+          data: {
+              plans: newPlans_string
+          },
+          headers: { 'X-CSRFToken': csrftoken },
+          success: function (response) {
+              console.log(response);
+          },
+          error: function (error) {
+              console.error(error);
+          }
+      });
+  }
+
+  //Wallet
+  function update_wallet(newWallet){
+    console.log("New Wallet: " + newWallet);
+    $.ajax({
+        type: 'POST',
+        url: '/save_wallet/',
+        data: {
+            wallet: newWallet
+        },
+        headers: { 'X-CSRFToken': csrftoken },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (error) {
+            console.error(error);
+        }
+    });
+  }
+
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+</script>
+
+{% comment %} third script {% endcomment %}
+<script>
+  const apiUrl2 = 'https://financialmodelingprep.com/api/v3/quote-order/';
+  //const apiKey2 = 'DZdHINhAKeEnsE6yDLBYFVI9lWOvPcLI';
+  const apiKey2 = '0f08f20f61c268804f9e94f55246c81a';
+  //const apiKey2 = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
+  
+
+  // Function to get the NowPrice of a symbol
+  function getNowPriceOut(symbol) {
+    return fetch(`${apiUrl2}${symbol}?apikey=${apiKey2}`)
+      .then(response => response.json())
+      .then(data => data[0].price)
+      .catch(error => {
+        console.error(`Error fetching data for ${symbol}:`, error);
+        return 0; // Return 0 if there's an error
+      });
+  }
+  var PlanID;
+  function sellPlan(planID){
+    PlanID = planID;
+    var myModal = new bootstrap.Modal(document.getElementById('sellPlanModal'));
+    myModal.show();
+
+  }
+
+  async function handleSellConfirmation() {
+    const plans = JSON.parse(localStorage.getItem('stockDataArray')) || [];
+
+    const wantedPlan = plans.find((plan)=> Number(plan.ID) == Number(PlanID));
+    console.log(wantedPlan);
+    let returnedValue = 0;
+
+    await Promise.all(wantedPlan.data.map(async (stock) => {
+      const nowPrice = await getNowPriceOut(stock.symbol);
+      const totalPrice = stock.shares * nowPrice;
+      returnedValue += totalPrice;
+      localStorage.setItem('wallet_sure', totalPrice);
+    }));
+    console.log("Returned Value = " + returnedValue);
+    const wallet = localStorage.getItem('wallet')||0;
+    const newWalletValue = (Number(wallet)+returnedValue).toFixed(2);
+    localStorage.setItem('wallet', newWalletValue);
+    update_wallet(newWalletValue);
+
+    const newPlans = plans.filter((plan)=>{
+      if(Number(plan.ID) != Number(PlanID))
+        return plan;
+    })
+    localStorage.setItem("stockDataArray", JSON.stringify(newPlans));
+    update_plans(newPlans)
+    location.reload();
+  }
+
+  function toggleCardVisibility(CardID){
+    const cards = JSON.parse(localStorage.getItem('stockDataArray')) || [];
+
+    const newCards = cards.map((card) => {
+      if (Number(card.ID) === Number(CardID)) {
+        if(card.Appearance == "block")
+          card.Appearance = "none";
+        else
+          card.Appearance = "block";
+      }
+      return card;
+    });
+    console.log(newCards);
+    localStorage.setItem("stockDataArray", JSON.stringify(newCards));
+    update_plans(newCards)
+    
+    location.reload();
+
+  }
+
+  function toggleHiddenCardsVisibility(){
+    const HiddenCards = document.getElementById('HiddenCards');
+    if(HiddenCards.style.display == 'none')
+      HiddenCards.style.display = 'block';
+    else
+      HiddenCards.style.display = 'none';
+
+    const arrowIcon = document.getElementById('arrowIcon');
+    if (arrowIcon.classList.contains('fa-chevron-right')) {
+      arrowIcon.classList.remove('fa-chevron-right');
+      arrowIcon.classList.add('fa-chevron-down');
+    } else {
+      arrowIcon.classList.remove('fa-chevron-down');
+      arrowIcon.classList.add('fa-chevron-right');
+    }
+  }
+
+  makeAjaxRequest().then(function () {
+    console.log('Ajax request successful');
+    //document.addEventListener('DOMContentLoaded', function () {
+      // 1. Retrieve data from local storage
+      const parsedData = JSON.parse(localStorage.getItem('stockDataArray')) || [];
+
+      //const parsedData = get_plans();
+
+      // 2. Create card elements dynamically
+      const cardContainer = document.getElementById('cardContainer');
+      const cardContainerHidden = document.getElementById('cardContainerHidden');
+      
+      const modal = createModal();
+      document.body.appendChild(modal);
+
+      var index = 0;
+      if (parsedData) {
+        parsedData.reverse().forEach(item => {
+          const card = createCardElement(item);
+          if(item.Appearance == 'none')
+            cardContainerHidden.appendChild(card);
+          else
+            cardContainer.appendChild(card);
+          index++;
+        });
+      }
+
+      function createCardElement(data) {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('col-lg-4', 'col-md-6', 'col-sm-12');
+        cardDiv.id = data.cardId;
+
+        cardDiv.innerHTML = `
+        <div class="card">
+          <div class="card-body">
+            <br>
+            <button type="button" class="btn btn-outline-secondary hide-btn" onclick="toggleCardVisibility('${data.ID}')">
+              ${data.Appearance == "block"? '<i class="fas fa-eye-slash"></i>': '<i class="fas fa-eye"></i>'}
+            </button>
+            <button type="button" class="btn btn-outline-danger selling-btn" onclick="sellPlan('${data.ID}')">
+              <i class="fas fa-dollar-sign">Sell</i>
+            </button>
+            <h3 class="CARD_titles">Plan</h3>
+            <p><small>start: ${data.FromDate}</small></p>
+            <p><small>end: ${data.DueDate}</small></p>
+            <a href="#" class="btn btn-primary show-modal-btn" onclick="showDetails(${index})">Show Details</a>
+          </div>
+        </div>
+        `;
+
+        return cardDiv;
+      }
+
+      function createModal() {
+        const modalDiv = document.createElement('div');
+        modalDiv.classList.add('modal', 'fade');
+        modalDiv.id = 'staticBackdrop';
+        modalDiv.setAttribute('data-bs-backdrop', 'static');
+        modalDiv.setAttribute('data-bs-keyboard', 'false');
+        modalDiv.setAttribute('tabindex', '-1');
+        modalDiv.setAttribute('aria-labelledby', 'staticBackdropLabel');
+        modalDiv.setAttribute('aria-hidden', 'true');
+
+        modalDiv.innerHTML = `
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Plan Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body My_modal-body" id="modal_content">
+                <!-- Content will be dynamically populated -->
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        return modalDiv;
+      }
+
+      window.showDetails = function(data_index) {
+        const data = parsedData[data_index];
+        const modalContent = document.getElementById('modal_content');
+
+        let symbolsString = '';
+        let pricesString = '';
+        let symbolsString_WithShares = '';
+        let sumOfPrices = 0;
+
+        // Use Promise.all to fetch real-time prices for all symbols concurrently
+        Promise.all(data.data.map(stock => getNowPrice(stock.symbol)))
+            .then(prices => {
+                // Iterate through each stock and calculate the sum of shares * real-time prices
+                data.data.forEach((stock, index) => {
+                    const nowPrice = prices[index];
+                    const totalPrice = stock.shares * nowPrice;
+                    sumOfPrices += totalPrice;
+
+                    symbolsString += `${stock.symbol}, `;
+                    pricesString += `${nowPrice}, `;
+                    symbolsString_WithShares += `${stock.symbol} (${stock.shares} shares), `;
+                });
+
+                // Remove the trailing comma and space
+                symbolsString = symbolsString.slice(0, -2);
+                pricesString = pricesString.slice(0, -2);
+                symbolsString_WithShares = symbolsString_WithShares.slice(0, -2);
+                
+
+                // Update modal content with the sum of prices
+                /*_____________________________________________________________________________________________*/
+                modalContent.innerHTML = `
+                    <p><b>Stocks:</b> ${symbolsString}</p>
+                    <p><b>Start Date: </b>${data.FromDate}</p>
+                    <p><b>Expected Selling Date: </b>${data.DueDate}</p>
+                    <p><b>Initial Amount: </b>$${data.Budget}</p>
+                    <p><b>Total Price Now: </b>$${sumOfPrices.toFixed(2)}</p>
+                    <p><b>Shares per stock: </b>${symbolsString_WithShares}</p>
+                    <p><b>Total Prediction: </b>$${data.FinalAmount}</p>
+
+
+                `;
+                /*_____________________________________________________________________________________________*/
+                // Create iframes for each stock
+                let S_prices = pricesString.split(',');
+                let counter = 0;
+                data.data.forEach((stock) => {
+                    const uniqueId = `tradingview_${stock.symbol}`;
+                    const widgetContainer = document.createElement('div');
+                    widgetContainer.classList.add('tradingview-widget-container', 'my-widget-container'); // Add a custom class for styling
+                    widgetContainer.style.height = '650px';
+                    widgetContainer.style.width = '100%';
+                /*_____________________________________________________________________________________________*/
+                    widgetContainer.innerHTML = `
+                        <br>
+                        <div class="container">
+                          <h2>${counter+1}. Symbol: ${stock.symbol}</h2>
+                          <p>Shares: ${stock.shares}</p>
+                          <p>Initial Price: $${stock.price}</p>               
+                          <p>Initial SharesxPrice: ${stock.shares} x ($${stock.price}) = $${stock.shares*stock.price}</p>
+                          <p>Total Price Now: $${stock.shares*stock.price}</p>
+                          <p>Price Now: $${S_prices[counter++]}</p>
+                          <p>Prediction: $${stock.finalPrice}</p>
+
+
+                          <div class="tradingview-widget-container" style="height: 500px; width: 100%;">
+                            <div id="${uniqueId}" style="height: 100%; width: 100%;"></div>
+                          </div>
+                        </div>
+                    `;
+                /*_____________________________________________________________________________________________*/
+
+                    modalContent.appendChild(widgetContainer);
+
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = 'https://s3.tradingview.com/tv.js';
+                    script.onload = function () {
+                        const tradingViewScript = document.createElement('script');
+                        tradingViewScript.type = 'text/javascript';
+                        tradingViewScript.textContent = `
+                            new TradingView.widget({
+                                "autosize": true,
+                                "symbol": "NASDAQ:${stock.symbol}",
+                                "interval": "D",
+                                "timezone": "Etc/UTC",
+                                "theme": "light",
+                                "style": "1",
+                                "locale": "en",
+                                "enable_publishing": false,
+                                "allow_symbol_change": true,
+                                "container_id": "${uniqueId}"
+                            });
+                        `;
+
+                        modalContent.appendChild(tradingViewScript);
+                    };
+
+                    modalContent.appendChild(script);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching real-time prices:', error);
+                // Handle the error if needed
+            });
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+        modal.show();
+      };
+
+      document.getElementById('Total_plans').textContent = parsedData.length;
+
+      let totalBudget = parsedData.reduce((sum, obj) => sum + parseFloat(Number(obj.Budget)), 0);
+      document.getElementById('Sum_Budgets').textContent = `${totalBudget.toFixed(2)}$`;
+
+      const apiUrl = 'https://financialmodelingprep.com/api/v3/quote-order/';
+      //const apiKey = 'DZdHINhAKeEnsE6yDLBYFVI9lWOvPcLI';
+      const apiKey = '0f08f20f61c268804f9e94f55246c81a';
+      //const apiKey = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
+      // Function to get the NowPrice of a symbol
+      function getNowPrice(symbol) {
+        return fetch(`${apiUrl}${symbol}?apikey=${apiKey}`)
+          .then(response => response.json())
+          .then(data => data[0].price)
+          .catch(error => {
+            console.error(`Error fetching data for ${symbol}:`, error);
+            return 0; // Return 0 if there's an error
+          });
+      }
+
+      // Function to calculate the sum of (shares * NowPrice) for all objects in arr
+      async function calculateSum(arr) {
+        let sum = 0;
+
+        for (const obj of arr) {
+          for (const stock of obj.data) {
+            const nowPrice = await getNowPrice(stock.symbol);
+            sum += stock.shares * nowPrice;
+          }
+        }
+
+        console.log('Sum:', sum);
+        document.getElementById('Total_Money_Now').textContent= `${sum.toFixed(2)}$`;
+
+        const gainLoseElement = document.getElementById('gain_lose');
+        const difference = sum - totalBudget;
+
+        if (Math.trunc(difference) < 0) {
+          gainLoseElement.textContent = `${difference.toFixed(2)}$`;
+          gainLoseElement.style.color = 'red';
+        } else if (Math.trunc(difference) > 0) {
+          gainLoseElement.textContent = `+${difference.toFixed(2)}$`;
+          gainLoseElement.style.color = 'green';
+        } else {
+          gainLoseElement.textContent = `${difference.toFixed(2)}$`;
+          gainLoseElement.style.color = 'rgb(1 41 112)';
+        };
+      }
+
+      // Example usage
+      calculateSum(parsedData);
+
+
+  //  });
+  }).catch(function (error) {
+    console.error('Error in first script:', error);
+  });
+</script>
+
+{% comment %} fourth script {% endcomment %}
+<!-- WALLET SCRIPT -->
+<script>
+makeAjaxRequest_wallet().then(function () {
+
+  //document.addEventListener("DOMContentLoaded", function () {
+      const wallet = localStorage.getItem('wallet')||0;
+
+      document.getElementById('wallet').innerText = Number(wallet).toFixed(2);
+
+      document.getElementById('NO_BTN').addEventListener('click', () => {
+          document.getElementById('saveButton').style.display = 'none';
+      });
+
+      // Add click event to the edit button
+      document.getElementById('editButton').addEventListener('click', function () {
+          var current_wallet = document.getElementById('wallet');
+
+          // Make the content editable
+          current_wallet.contentEditable = true;
+          current_wallet.focus();
+
+          // Show the save button
+          document.getElementById('saveButton').style.display = 'inline';
+      });
+
+      // Add click event to the save button
+      document.getElementById('saveButton').addEventListener('click', function () {
+          // Show the edit modal
+          let now_wallet = document.getElementById('wallet').innerText;
+          console.log(now_wallet);
+          if (Number(wallet) !== Number(now_wallet)) {
+              var editModal = new bootstrap.Modal(document.getElementById('editModal'), {});
+              editModal.show();
+          } else {
+              document.getElementById('saveButton').style.display = 'none';
+          }
+
+      });
+
+      // Listen for the confirmEdit button click
+      document.getElementById('confirmEdit').addEventListener('click', function () {
+          var current_wallet = document.getElementById('wallet');
+
+          // Disable content editing
+          current_wallet.contentEditable = false;
+
+          // Save the new value to localStorage
+          var newValue = current_wallet.innerText;
+          const new_Wallet_Value = isNaN(Number(newValue))? 0 : Number(newValue)
+          localStorage.setItem('wallet', new_Wallet_Value);
+          update_wallet(new_Wallet_Value);
+
+          // If the new value is empty, revert to the original value
+          if (newValue.trim() === '') {
+              current_wallet.innerText = originalValue;
+          }
+
+          // Hide the save button
+          document.getElementById('saveButton').style.display = 'none';
+
+          // Close the modal
+          var editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+          editModal.hide();
+      });
+  //});
+
+}).catch(function (error) {
+  console.error('Error in first script:', error);
+});
+</script>
+{% endblock content2 %}

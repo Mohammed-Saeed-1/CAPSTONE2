@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>UTRADE</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/UTRADE_ICON-removebg-preview.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Sep 18 2023 with Bootstrap v5.3.2
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <i class="bi bi-list toggle-sidebar-btn" style="margin-left: -20px;"></i>
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="logo" style="padding-left: 40px;">
+      </a>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">UserName</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>UserName</h6>
+              <br>
+            </li>
+          <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li>
+            <li>
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="index.html">
+          <i class="bi bi-grid"></i>
+          <span>Home</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="news.html">
+          <i class="bi bi-newspaper"></i>
+          <span>News</span>
+        </a>
+      </li><!-- End News le Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="search.html">
+          <i class="bi bi-currency-dollar"></i>
+          <span>Stocks</span>
+        </a>
+      </li><!-- End Stocks le Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="trade.html">
+          <i class="bi bi-arrow-up-right-circle-fill"></i>
+          <span>Trade</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-contact.html">
+          <i class="bi bi-envelope"></i>
+          <span>Contact Us</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-register.html">
+          <i class="bi bi-card-list"></i>
+          <span>Register</span>
+        </a>
+      </li><!-- End Register Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-login.html">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Login</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Home</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active"><a href="index.html">Home</a></li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin-bottom: 25px;">
+      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+      <label class="btn btn-outline-primary" for="btnradio1" onclick="toggleContent('content1')">Popular</label>
+  
+      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+      <label class="btn btn-outline-primary" for="btnradio2" onclick="toggleContent('content2')">Favorite</label>
+  </div>
+  
+  <div id="content1" style="display: block;">
+    <div class="accordion">
+      <div class="accordion-item" style="padding-bottom: 10px;">
+          <button style="background-color: #2880df; color: white;" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#stock2" aria-expanded="false" aria-controls="stock2">
+            TSLA
+          </button>
+      </div>
+      <div class="collapse" id="stock2">
+        <div class="card card-body">
+        
+          <section class="section dashboard">
+            <div class="row">
+  
+              <!-- Left side columns -->
+              <div class="col-lg-12">
+                <div class="row">
+              
+                  <!-- ADD BOXES HERE -->
+  
+                  <!-- Reports -->
+                  <div class="col-12">
+                    <div class="card" style="margin-top: 20px; background-color: rgb(217, 238, 254);">
+  
+                      <div class="card-body">
+                        <h5 class="card-title">Chart <span>/Now</span>
+                        </h5>
+  
+                        <!-- Line Chart -->
+                        <!-- TradingView Widget BEGIN -->
+                        <div class="tradingview-widget-container" style="height:100%";width:100%>
+                          <div id="tradingview_097e7" style="width: 100%; height: 550px;"></div>
+                          <div class="tradingview-widget-copyright"></div>
+                          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                          <script type="text/javascript">
+                          new TradingView.widget(
+                          {
+                          "autosize": true,
+                          "symbol": "NASDAQ:TSLA",
+                          "interval": "D",
+                          "timezone": "Asia/Kuwait",
+                          "theme": "light",
+                          "style": "1",
+                          "locale": "en",
+                          "enable_publishing": false,
+                          "allow_symbol_change": true,
+                          "container_id": "tradingview_097e7"
+                        }
+                          );
+                          </script>
+                        </div>
+                        <!-- End Line Chart -->
+  
+                      </div>
+  
+                    </div>
+                  </div><!-- End Reports -->
+  
+                </div>
+              </div><!-- End Left side columns -->
+              <!-- Right side columns -->
+              <div class="col-lg-4">
+              </div><!-- End Right side columns -->
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+      <div class="accordion" id="stockAccordion2 ">
+        <div class="accordion-item" style="padding-bottom: 10px;">
+            <button style="background-color: #2880df; color: white;" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#BBB" aria-expanded="false" aria-controls="BBB">
+              GOOG
+            </button>
+        </div>
+
+        <div class="collapse" id="BBB">
+          <div class="card card-body">
+        
+            <section class="section dashboard">
+              <div class="row">
+    
+                <!-- Left side columns -->
+                <div class="col-lg-12">
+                  <div class="row">
+                
+                    <!-- ADD BOXES HERE -->
+    
+                    <!-- Reports -->
+                    <div class="col-12">
+                      <div class="card" style="margin-top: 20px; background-color: rgb(217, 238, 254);">
+    
+                        <div class="card-body">
+                          <h5 class="card-title">Chart <span>/Now</span>
+                          </h5>
+    
+                          <!-- Line Chart -->
+                          <!-- TradingView Widget BEGIN -->
+                          <div class="tradingview-widget-container" style="height:100%";width:100%>
+                            <div id="tradingview_097e8" style="width: 100%; height: 550px;"></div>
+                            <div class="tradingview-widget-copyright"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                            <script type="text/javascript">
+                            new TradingView.widget(
+                            {
+                            "autosize": true,
+                            "symbol": "NASDAQ:GOOG",
+                            "interval": "D",
+                            "timezone": "Asia/Kuwait",
+                            "theme": "light",
+                            "style": "1",
+                            "locale": "en",
+                            "enable_publishing": false,
+                            "allow_symbol_change": true,
+                            "container_id": "tradingview_097e8"
+                          }
+                            );
+                            </script>
+                          </div>
+                          <!-- End Line Chart -->
+    
+                        </div>
+    
+                      </div>
+                    </div><!-- End Reports -->
+    
+                  </div>
+                </div><!-- End Left side columns -->
+    
+                <!-- Right side columns -->
+                <div class="col-lg-4">
+                </div><!-- End Right side columns -->
+    
+              </div>
+            </section>
+    
+          </div>
+      </div>
+      <!-- <p>This is the Popular content.</p> -->
+  </div>
+
+  <div id="content2" style="display: block;">
+    <div class="accordion">
+      <div class="accordion-item" style="padding-bottom: 10px;">
+          <button style="background-color: #2880df; color: white;" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#stock5" aria-expanded="false" aria-controls="stock5">
+            IBM
+          </button>
+      </div>
+      <div class="collapse" id="stock5">
+        <div class="card card-body">
+        
+          <section class="section dashboard">
+            <div class="row">
+  
+              <!-- Left side columns -->
+              <div class="col-lg-12">
+                <div class="row">
+              
+                  <!-- ADD BOXES HERE -->
+  
+                  <!-- Reports -->
+                  <div class="col-12">
+                    <div class="card" style="margin-top: 20px; background-color: rgb(217, 238, 254);">
+  
+                      <div class="card-body">
+                        <h5 class="card-title">Chart <span>/Now</span>
+                        </h5>
+  
+                        <!-- Line Chart -->
+                        <!-- TradingView Widget BEGIN -->
+                        <div class="tradingview-widget-container" style="height:100%";width:100%>
+                          <div id="tradingview_097e9" style="width: 100%; height: 550px;"></div>
+                          <div class="tradingview-widget-copyright"></div>
+                          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                          <script type="text/javascript">
+                          new TradingView.widget(
+                          {
+                          "autosize": true,
+                          "symbol": "NASDAQ:IBM",
+                          "interval": "D",
+                          "timezone": "Asia/Kuwait",
+                          "theme": "light",
+                          "style": "1",
+                          "locale": "en",
+                          "enable_publishing": false,
+                          "allow_symbol_change": true,
+                          "container_id": "tradingview_097e9"
+                        }
+                          );
+                          </script>
+                        </div>
+                        <!-- End Line Chart -->
+  
+                      </div>
+  
+                    </div>
+                  </div><!-- End Reports -->
+  
+                </div>
+              </div><!-- End Left side columns -->
+  
+              <!-- Right side columns -->
+              <div class="col-lg-4">
+              </div><!-- End Right side columns -->
+  
+            </div>
+          </section>
+  
+        </div>
+      </div>
+    </div>
+
+      <div class="accordion" id="stockAccordion2 ">
+        <div class="accordion-item" >
+            <button style="background-color: #2880df; color: white;" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#stock6" aria-expanded="false" aria-controls="stock6">
+              AAPL
+            </button>
+        </div>
+
+        <div class="collapse" id="stock6">
+          <div class="card card-body">
+        
+            <section class="section dashboard">
+              <div class="row">
+    
+                <!-- Left side columns -->
+                <div class="col-lg-12">
+                  <div class="row">
+                
+                    <!-- ADD BOXES HERE -->
+    
+                    <!-- Reports -->
+                    <div class="col-12">
+                      <div class="card" style="margin-top: 20px; background-color: rgb(217, 238, 254);">
+    
+                        <div class="card-body">
+                          <h5 class="card-title">Chart <span>/Now</span>
+                          </h5>
+    
+                          <!-- Line Chart -->
+                          <!-- TradingView Widget BEGIN -->
+                          <div class="tradingview-widget-container" style="height:100%";width:100%>
+                            <div id="tradingview_097e10" style="width: 100%; height: 550px;"></div>
+                            <div class="tradingview-widget-copyright"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                            <script type="text/javascript">
+                            new TradingView.widget(
+                            {
+                            "autosize": true,
+                            "symbol": "NASDAQ:AAPL",
+                            "interval": "D",
+                            "timezone": "Asia/Kuwait",
+                            "theme": "light",
+                            "style": "1",
+                            "locale": "en",
+                            "enable_publishing": false,
+                            "allow_symbol_change": true,
+                            "container_id": "tradingview_097e10"
+                          }
+                            );
+                            </script>
+                          </div>
+                          <!-- End Line Chart -->
+    
+                        </div>
+    
+                      </div>
+                    </div><!-- End Reports -->
+    
+                  </div>
+                </div><!-- End Left side columns -->
+    
+                <!-- Right side columns -->
+                <div class="col-lg-4">
+                </div><!-- End Right side columns -->
+    
+              </div>
+            </section>
+    
+          </div>
+      </div>
+      <!-- <p>This is the Popular content.</p> -->
+  </div>
+  
+  <script>
+      function toggleContent(contentId) {
+          // Hide all content divs
+          var contents = document.querySelectorAll('[id^="content"]');
+          contents.forEach(function (content) {
+              content.style.display = 'none';
+          });
+  
+          // Show the selected content div
+          document.getElementById(contentId).style.display = 'block';
+      }
+
+      function toggleContent(elementId) {
+        var content = document.getElementById(elementId);
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+        } else {
+            // content.style.display = 'block';
+        }
+      }
+  </script>
+
+  </main><!-- End #main -->
+  
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer" style="margin-top: 250px;">
+    <div class="copyright">
+      <a href="#">&copy; Copyright <strong><span>UTRADE</span></strong>.</a>
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

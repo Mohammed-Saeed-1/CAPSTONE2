@@ -1,0 +1,436 @@
+{% extends 'base_without_traveling.html' %}
+{% block title %}Portfolio{% endblock %}
+
+{% load static %}
+
+{% block content %}
+{% endblock content %}
+
+{% block content2 %}
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Test Your Plan:</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href = "{% url 'Utrade:portfolio' %}">Home</a></li>
+            <li class="breadcrumb-item active">Trade</li>
+          </ol>
+        </nav>
+      </div><!-- End Page Title -->
+      
+      <div class="container mt-5">
+        <form id="stock-allocation-form" action="result">
+          <!-- Retrieve the data array from localStorage -->
+          <h2>Number of shares:</h2>
+          <ul id="stock-allocations"></ul>
+          <h5 id="Budget"></h5>
+        
+          <h5 id="amount"></h5>
+          <button type="button" id="check-button" class="btn btn-outline-primary">Check</button>
+          <button onclick="auto_fill()" type="button" id="check-button" class="btn btn-outline-primary">Auto filling</button><br><br><br>
+      
+          <!-- Add a "Cancel" button to remove the last stock symbol -->
+          <button type="button" id="cancel-button" class="btn btn-danger">Cancel</button>
+          <span id="alert"></span>
+      
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+      
+  </main><!-- End #main -->
+
+  <script>
+
+    const csrftoken = getCookie('csrftoken');
+
+    //Plans
+    function update_plans(newPlans){
+        const newPlans_string = JSON.stringify(newPlans);
+
+        $.ajax({
+            type: 'POST',
+            url: '/save_plans/',
+            data: {
+                plans: newPlans_string
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+
+    //Wallet
+    function update_wallet(newWallet){
+        console.log("New Wallet: " + newWallet);
+        $.ajax({
+            type: 'POST',
+            url: '/save_wallet/',
+            data: {
+                wallet: newWallet
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+
+
+
+    const stockDataArray = JSON.parse(localStorage.getItem("stockDataArray"));
+    var initialBudget = Number(localStorage.getItem("wallet"));
+    var returned_value = 0;
+    var returned_value2 = 0;
+  
+    if (stockDataArray) {
+      const stockAllocations = document.getElementById("stock-allocations");
+  
+      // Display and allow allocation for the latest set of data
+      const latestStockData = stockDataArray[stockDataArray.length - 1]; //return an Object
+  
+      document.getElementById('cancel-button').addEventListener('click', ()=>{
+          stockDataArray.pop();
+          localStorage.setItem("stockDataArray", JSON.stringify(stockDataArray));
+          update_plans(stockDataArray);
+  
+          const wallet4 = Number(localStorage.getItem('wallet'));
+          let first_value = (wallet4+Number(latestStockData.Budget)).toFixed(2);
+          localStorage.setItem('wallet', first_value)
+          update_wallet(first_value);
+  
+          window.location.href = "{% url 'Utrade:portfolio' %}";
+      })
+  
+      var inner = "";
+      latestStockData.data.forEach(stock => {
+      inner += `
+          <span>${stock.symbol} (price: $${stock.price}):</span><br>
+          <div class="col-2">
+              <input onchange="clickEventHandler()" class="form-control" type="number" name="${stock.symbol.trim()}" placeholder="Number of shares" value="1">
+          </div>
+          <br>
+      `;
+      });
+      stockAllocations.innerHTML = inner;
+  
+      document.getElementById('Budget').innerHTML = `Budget: $${Number(latestStockData.Budget).toFixed(2)}`;
+  
+  
+      // Store the allocation data in localStorage when the form is submitted
+      var i=0;
+      document.getElementById("stock-allocation-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+  
+        clickEventHandler2()
+        console.log(Math.abs(Math.ceil(returned_value2)));
+  
+        let isNoShares = true;
+        latestStockData.data.forEach(stock => {
+              const shareInput = document.getElementsByName(stock.symbol.trim())[0];
+              if (Number(shareInput.value)) {
+                isNoShares = false;
+              }
+          });
+        
+        if(isNoShares){
+          alert("At least you should select one share");
+        }
+        else{
+          if(Math.ceil(returned_value2) < 0 && Math.abs(Math.ceil(returned_value2)) != 0){
+            clickEventHandler();
+            console.log('if');
+          }
+          else{
+            latestStockData.data.forEach(stock => {
+              const shareInput = document.getElementsByName(stock.symbol.trim())[0];
+              if (shareInput) {
+                const sharesNo = shareInput.value;
+                latestStockData.data[i++].shares = Number(sharesNo);
+              }
+            });
+  
+            i=0;
+            // Update the stockDataArray in localStorage with the updated data
+            if(initialAmount < Number(latestStockData.Budget)){
+                  const modifiedBudget = (Number(latestStockData.Budget) - initialAmount).toFixed(2);
+                  latestStockData.Budget = modifiedBudget; // Set the new budget
+                  
+                  const modalHTML2 = `
+                        <div class="modal fade" id="exampleModal2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirm Budget</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      Your budget has been adjusted to $${(Number(latestStockData.Budget)).toFixed(2)}<br>
+                                      The remaining money from the budget will be returned to your wallet<br><br>
+                                      Are you sure you want continue
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button data-bs-dismiss="modal" type="button" class="btn btn-primary">No</button>
+                                      <button id="nextButton" data-bs-dismiss="modal" type="button" class="btn btn-primary">Yes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+  
+                    // Set the modal HTML to the "alert" element
+                    document.getElementById('alert').innerHTML = modalHTML2;
+  
+                    const modal = new bootstrap.Modal(document.getElementById('exampleModal2'));
+  
+                    // Add a click event listener to the "Next" button
+                    document.getElementById('nextButton').addEventListener('click', function() {
+  
+                        //const wallet3 = Number(localStorage.getItem('wallet'));
+                        const theNewValue = ((Number(initialBudget)+(Math.abs(Number(returned_value2)))).toFixed(2));
+                        localStorage.setItem('wallet', theNewValue);
+                        update_wallet(theNewValue);
+                        
+                        console.log("initialBudget" + initialBudget);
+                        console.log("return value" + Math.abs(Number(returned_value2)));
+                        localStorage.setItem("stockDataArray", JSON.stringify(stockDataArray));
+                        update_plans(stockDataArray);
+
+                        window.location.href = "{% url 'Utrade:result' %}";
+                        console.log('else in');
+                    });
+  
+                    modal.show();
+            }else{
+              localStorage.setItem("stockDataArray", JSON.stringify(stockDataArray));
+              update_plans(stockDataArray);
+              // Redirect to the result page
+              window.location.href = "{% url 'Utrade:result' %}";
+              console.log('else');
+            }
+          }
+        }
+  
+      });
+  
+      var initialAmount = Number(latestStockData.Budget);
+      clickEventHandler();
+  
+      function clickEventHandler(){
+          initialAmount = latestStockData.Budget;
+          latestStockData.data.forEach(stock => {
+              const shareInput = document.getElementsByName(stock.symbol.trim())[0];
+              if (shareInput) {
+                  const sharesNo = shareInput.value;
+                  initialAmount -= sharesNo * stock.price;
+              }
+          });
+          returned_value = initialAmount;
+          returned_value2 = initialAmount;
+  
+          if(initialAmount < 0 && (-1*initialAmount.toFixed(2)) != 0){
+            const wallet = Number(localStorage.getItem('wallet'));
+            const difference = wallet - (-1*initialAmount);
+              const modalHTML = `
+                  <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                          <div class="modal-header">
+                              
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              ${difference<0? `
+                                <b>You do not have enough money in your wallet to complete this process.</b><br><br>
+                                You have <b>${wallet}</b>$ in your wallet, and you need to add <b>${-1*initialAmount.toFixed(2)}$</b> to your budget
+                                which means at least you should have <b>$${-1*initialAmount.toFixed(2)}$</b> in your wallet to complete this process.<br><br>
+                                Do you want to add <b>${((-1*initialAmount)-wallet).toFixed(2)}$</b> to your wallet so your wallet would be <b>${-1*initialAmount.toFixed(2)}$</b>.`
+                                :`
+                                <b>The budget is not enough</b><br><br>
+                                You must add <b>$${-1*initialAmount.toFixed(2)}</b> to your budget<br><br>
+                                Do you want to add <b>$${-1*initialAmount.toFixed(2)}</b> to your budget<br>
+                                Your budget will be: <b>$${(Number(latestStockData.Budget)+(-1*initialAmount)).toFixed(2)}</b>
+                              `}
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                              <button onclick="increase_budget(${-1*initialAmount.toFixed(2)})" data-bs-dismiss="modal" type="button" class="btn btn-primary">Yes</button>
+                          </div>
+                          </div>
+                      </div>
+                  </div>
+              `;
+  
+              // Set the modal HTML to the "alert" element
+              document.getElementById('alert').innerHTML = modalHTML;
+              
+              document.getElementById('amount').innerHTML = `<span style="color: red;" >You must add: $${-1*initialAmount.toFixed(2)}</span>`;
+              // Show the modal using JavaScript
+              const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+              modal.show();
+          }
+          else{
+              document.getElementById('amount').innerHTML = `<span>You still have: $${Math.abs(initialAmount.toFixed(2))}</span>`;
+          }
+      }
+      function increase_budget(value){
+          
+          if((Number(localStorage.getItem('wallet')) - value)<0){
+            localStorage.setItem('wallet', value);
+            update_wallet(value);
+          }
+  
+          latestStockData.Budget = (Number(latestStockData.Budget) + value).toFixed(2);
+          document.getElementById('Budget').innerHTML = `Budget: $${latestStockData.Budget}`;
+          localStorage.setItem("stockDataArray", JSON.stringify(stockDataArray));
+          update_plans(stockDataArray);
+          
+          initialAmount = Number(latestStockData.Budget).toFixed(2);
+          document.getElementById('amount').innerHTML = `<span>You still have: $0.00</span>`;
+  
+          const wallet = Number(localStorage.getItem('wallet'));
+          const the_new_value = (wallet - value).toFixed(2);
+          localStorage.setItem('wallet', the_new_value);
+          update_wallet(the_new_value);
+          
+          initialBudget = (wallet - value).toFixed(2);
+          console.log('new number'+ (wallet - value).toFixed(2) );
+      }
+  
+      function auto_fill(){
+          //let n = Number(latestStockData.Budget);
+          let sum = 0;
+          let sum2 = 0;
+          let min = latestStockData.data[0].price;
+          let c = 1;
+          let k = 0;
+          let index = 0;
+          if(latestStockData.data.length != 1){
+              latestStockData.data.forEach(stock => {
+                  sum+= stock.price;
+                  if(min > stock.price){
+                      min = stock.price;
+                      index = k;
+                  }
+                  k++;
+              });
+  
+              console.log("index = " + index);
+              console.log("k = " + k);
+  
+              sum2 = sum;
+              while(1){
+                  if((sum+sum2) < (Number(latestStockData.Budget)+0.5)){
+                      sum+=sum2;
+                      c++;
+                  }
+                  else
+                      break;
+              }
+              console.log("sum = " + sum);
+              console.log("c = " + c);
+  
+              latestStockData.data.forEach(stock => {
+                  const shareInput = document.getElementsByName(stock.symbol.trim())[0];
+                  if (shareInput) {
+                      shareInput.value = c;
+                  }
+              });
+  
+              let times = 0;
+              const the_min_price = document.getElementsByName(latestStockData.data[index].symbol.trim())[0];
+              console.log("the_min_price" + the_min_price.value);
+              while(true){
+                  if((((times+1)*latestStockData.data[index].price) + sum) <= (Number(latestStockData.Budget)+0.1))
+                      times+=1;
+                  else
+                      break;
+              }
+              console.log("times = " + times);
+              if(((times*Number(the_min_price.value)) + sum) <= Number(latestStockData.Budget)){
+                  let a = Number(the_min_price.value);
+                  a+=times;
+                  the_min_price.value = a;
+              }
+          }
+          else if(latestStockData.data.length == 1){
+              let PRICE = Number(latestStockData.data[0].price);
+              let BUDGET = Number(latestStockData.Budget);
+              k = PRICE;
+              let j = 0;
+              while((k+PRICE) <= (BUDGET+0.5)){
+                  k+=PRICE;
+                  j++;
+              }
+              console.log("j = "+j);
+              const shareInput = document.getElementsByName(latestStockData.data[0].symbol.trim())[0];
+              if(((Number(shareInput.value)+j)*PRICE) <= (BUDGET+0.5)){
+                  let a = Number(shareInput.value);
+                  a+=j;
+                  shareInput.value = a;
+              }
+          }
+             
+          clickEventHandler();
+      }
+      function clickEventHandler2(){
+        initialAmount = latestStockData.Budget;
+          latestStockData.data.forEach(stock => {
+              const shareInput = document.getElementsByName(stock.symbol.trim())[0];
+              if (shareInput) {
+                  const sharesNo = shareInput.value;
+                  initialAmount -= sharesNo * stock.price;
+              }
+          });
+          returned_value2 = initialAmount;
+      }
+  
+      document.getElementById('check-button').addEventListener('click',clickEventHandler);
+    }
+  
+  
+    // Add an entry to the browser's session history
+    const state = { page: 1 };
+    const title = '';
+    const url = 'portfolio.html';
+  
+    window.history.pushState(state, title, url);
+  
+    // Prevent the user from navigating back
+    window.addEventListener('popstate', function (event) {
+        // Add another entry to the history to keep the current state
+        window.history.pushState(state, title, url);
+        alert("You should cansel first")
+  
+        // You can also display a message to the user if needed
+        console.log("You cannot navigate back.");
+    });
+  
+  
+  </script>
+
+{% endblock content2 %}

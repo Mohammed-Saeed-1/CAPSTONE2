@@ -1,0 +1,245 @@
+{% extends 'after_base.html' %}
+{% block title %}Portfolio{% endblock %}
+
+{% load static %}
+
+{% block content %}
+{% endblock content %}
+
+{% block content2 %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Frequently Asked Questions</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active">Frequently Asked Questions</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+  
+    <section class="section faq">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card basic">
+            <div class="card-body">
+              <h5 class="card-title">Portfolio and Plans</h5>
+  
+              <div>
+                <h6>1. How do I create a new investment plan?</h6>
+                <p>To create a new investment plan, navigate to the "Trade" section in your UTRADE account, where you can specify details such as stock symbols, end date, and the initial amount. Choose the stocks you're interested in, and you're all set!</p>
+              </div>
+  
+              <div class="pt-2">
+                <h6>2. Can I edit or cancel an existing plan?</h6>
+                <p>No, you cannot edit or cancel an existing plan.</p>
+              </div>
+  
+              <div class="pt-2">
+                <h6>3. Where can I view my portfolio details?</h6>
+                <p>Your portfolio details can be found in the "Portfolio" section. It provides a comprehensive overview of all your plans, including the initial amount, current total price, number of shares, and the outcome based on our algorithm. Additionally, you can view real-time information for each symbol separately.</p>
+              </div>
+  
+              <div class="pt-2">
+                <h6>4. How can I add the amount of money to my wallet?</h6>
+                <p>To add money to your UTRADE wallet, visit the "Portfolio" section, click the "pencil" icon inside the wallet box, edit the amount, and save the changes.</p>
+              </div>
+  
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-lg-6">
+          <!-- F.A.Q Group 2 -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Stock Information</h5>
+  
+              <div class="accordion accordion-flush" id="faq-group-2">
+                <!-- Replace with actual questions and answers -->
+  
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsTwo-1" type="button" data-bs-toggle="collapse">
+                      What does the stock symbol represent?
+                    </button>
+                  </h2>
+                  <div id="faqsTwo-1" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                    <div class="accordion-body">
+                      The stock symbol is a unique abbreviation assigned to a publicly traded company. It serves as a shorthand representation of the company's name for stock market trading. For example, AAPL is the stock symbol for Apple Inc.
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsTwo-2" type="button" data-bs-toggle="collapse">
+                      How do I search for information on a specific stock?
+                    </button>
+                  </h2>
+                  <div id="faqsTwo-2" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                    <div class="accordion-body">
+                      Utilize the search functionality in the "Stocks" section. Enter the stock symbol to retrieve relevant stock chart and information, including the logo, current price, volume, market cap, and more.
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsTwo-3" type="button" data-bs-toggle="collapse">
+                      How do I add a stock to my favorites?
+                    </button>
+                  </h2>
+                  <div id="faqsTwo-3" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                    <div class="accordion-body">
+                      When viewing stock information in the “Stocks” section, click on the "Add to Favorites" button to include the stock in your list of favorites. This allows you to easily track and access information about stocks you are interested in.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- End F.A.Q Group 2 -->
+        </div>
+      </div>
+    </section>
+    
+    <section class="section faq">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card basic">
+            <div class="card-body">
+              <h5 class="card-title">Testing Plans</h5>
+    
+              <div>
+                <h6>1. How does the testing feature work?</h6>
+                <p>The testing feature in UTRADE allows you to simulate the performance of an investment plan. Enter details such as stock symbols, expected selling date, and the initial amount. You can manually split the amount or use the auto-filling option to maximize shares.</p>
+              </div>
+    
+              <div class="pt-2">
+                <h6>2. What is the purpose of the auto-filling option?</h6>
+                <p>The auto-filling option automatically distributes the initial amount among selected stocks to maximize the number of shares based on our algorithm. It provides a convenient way to optimize your investment plan for potential profitability.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <div class="col-lg-6">
+          <!-- F.A.Q Group 3 -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Algorithm and Predictions</h5>
+    
+              <div class="accordion accordion-flush" id="faq-group-3">
+                <!-- Replace with actual questions and answers -->
+    
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsThree-1" type="button" data-bs-toggle="collapse">
+                      How does UTRADE's prediction algorithm work?
+                    </button>
+                  </h2>
+                  <div id="faqsThree-1" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                    <div class="accordion-body">
+                      UTRADE's prediction algorithm combines historical data, machine learning, and statistical techniques. It analyzes patterns, market trends, and factors influencing stock prices to provide real-time predictions for the performance of selected stocks within your plans.
+                    </div>
+                  </div>
+                </div>
+    
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsThree-2" type="button" data-bs-toggle="collapse">
+                      What factors does the algorithm consider in making predictions?
+                    </button>
+                  </h2>
+                  <div id="faqsThree-2" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                    <div class="accordion-body">
+                      The algorithm considers a variety of factors, including historical stock performance, market trends, news sentiment, and other relevant data points. It aims to provide accurate predictions by analyzing a comprehensive set of variables.
+                    </div>
+                  </div>
+                </div>
+    
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsThree-3" type="button" data-bs-toggle="collapse">
+                      How accurate are the predictions?
+                    </button>
+                  </h2>
+                  <div id="faqsThree-3" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                    <div class="accordion-body">
+                      The accuracy of predictions can vary based on market conditions. UTRADE's algorithm is designed to continuously learn from historical data and adapt to changing market dynamics, enhancing its accuracy over time. It's important to note that it is not necessary for predictions to always be completely accurate, as the stock market inherently involves uncertainties and fluctuations.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- End F.A.Q Group 3 -->
+        </div>
+      </div>
+    </section>
+  
+    <section class="section faq">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card basic">
+            <div class="card-body">
+              <h5 class="card-title">Security and Privacy</h5>
+    
+              <div>
+                <h6>1. Is my data shared with third parties?</h6>
+                <p>No, we do not share it with third parties. We prioritize the privacy and security of your information.</p>
+              </div>
+    
+            </div>
+          </div>
+        </div>
+    
+        <div class="col-lg-6">
+          <!-- F.A.Q Group 4 -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Recommendations</h5>
+    
+              <div class="accordion accordion-flush" id="faq-group-4">
+                <!-- Replace with actual questions and answers -->
+    
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-target="#faqsFour-1" type="button" data-bs-toggle="collapse">
+                      How do recommendations for splitting the initial amount generated?
+                    </button>
+                  </h2>
+                  <div id="faqsFour-1" class="accordion-collapse collapse" data-bs-parent="#faq-group-4">
+                    <div class="accordion-body">
+                      Recommendations for splitting the initial amount are generated using an algorithm that assesses potential returns for each stock. The algorithm prioritizes allocating funds to stocks with the most promising expected profits, providing you with optimal recommendations for maximizing profitability.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- End F.A.Q Group 4 -->
+        </div>
+      </div>
+    </section>
+    
+    <section class="section faq">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card basic">
+            <div class="card-body">
+              <h5 class="card-title">Contact and Support</h5>
+    
+              <div>
+                <h6>1. How can I get in touch with UTRADE support?</h6>
+                <p>You can contact UTRADE support through our "Contact Us" section on the website. Alternatively, you can send an email to support@utrade.com for assistance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+{% endblock content2 %}

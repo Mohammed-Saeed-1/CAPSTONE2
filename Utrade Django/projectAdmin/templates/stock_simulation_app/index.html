@@ -1,0 +1,18 @@
+<!-- stock_simulation_app/templates/stock_simulation_app/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Simulation</title>
+</head>
+<body>
+
+<h2>Stock Simulation</h2>
+
+<form method="post" action="{% url 'stock_simulation' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Simulate</button>
+</form>
+
+</body>
+</html>

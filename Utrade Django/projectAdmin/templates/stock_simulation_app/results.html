@@ -1,0 +1,20 @@
+<!-- stock_simulation_app/templates/stock_simulation_app/results.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Simulation Results</title>
+</head>
+<body>
+
+<h2>Simulation Results for {{ stock_symbol }}</h2>
+
+<p>Initial Investment: ${{ results.initial_investment }}</p>
+<p>Investment Period: {{ results.investment_period_years }} years</p>
+<p>Number of Simulations: {{ results.num_simulations }}</p>
+
+<p>Simulation Results:</p>
+<p>Mean Final Value: ${{ results.mean_final_value }}</p>
+<p>Standard Deviation of Final Value: ${{ results.std_dev_final_value }}</p>
+
+</body>
+</html>

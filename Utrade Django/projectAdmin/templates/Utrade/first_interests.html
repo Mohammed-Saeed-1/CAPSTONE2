@@ -1,0 +1,126 @@
+{% extends 'before_base.html' %}
+{% block title %}First Interests{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+
+    .interest-img {
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        margin: 20px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out; /* Smooth transition on hover */
+    }
+
+    .interest-img:hover {
+        transform: scale(1.1); /* Enlarge the image on hover */
+    }
+
+    .selected {
+        filter: brightness(70%);
+        border: 5px solid #007bff; /* Highlight selected images */
+        box-shadow: 0 0 25px rgba(0, 123, 255, 20.5); /* Add a subtle shadow to selected images */
+    }
+
+    p {
+        font-weight: bold;
+    }
+
+    /* Additional styling for the Next button */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+</style>
+{% endblock content %}
+
+
+{% block content2 %}
+<main>
+    <div class="container mt-5 py-4">
+        <h1 style="text-align: center;">Select Your Interests</h1>
+        <div id="interests-container" class="d-flex flex-wrap">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/Software.png' %}" alt="Interest 1" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Software</p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/AI_ML.jpg' %}" alt="Interest 2" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Artificial intelligence</p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/Cybersecurity.jpg' %}" alt="Interest 3" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Cybersecurity</p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/CloudComputing.jpg' %}" alt="Interest 4" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Cloud Computing</p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/DataScience.jpg' %}" alt="Interest 5" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Data Science</p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/IOT.jpg' %}" alt="Interest 6" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Internet of Things</p>
+                </div>
+
+                
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/Machine_Learing.jpg' %}" alt="Interest 7" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Machine Learning</p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                    <img src="{%static 'img/Semiconductors.jpg' %}" alt="Interest 8" class="interest-img" onclick="toggleSelection(this)">
+                    <p>Semiconductors</p>
+                </div>
+
+
+            </div>
+            
+            <!-- Add more images as needed -->
+        </div>        
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-primary mt-3" onclick="saveSelection()">Next</button>
+        </div>
+    </div>
+    
+
+
+</main>
+
+<script>
+    // JavaScript code
+
+    // Function to toggle selection on click
+    function toggleSelection(imgElement) {
+    imgElement.classList.toggle("selected");
+    }
+
+    // Function to save selected interests to local storage
+    function saveSelection() {
+    // Get all selected interest images
+    const selectedImages = document.querySelectorAll('.selected');
+
+    // Extract the interest names from the alt attribute of selected images
+    const selectedInterests = Array.from(selectedImages).map(img => img.alt);
+
+    // Save selected interests to local storage
+    localStorage.setItem('selectedInterests', JSON.stringify(selectedInterests));
+
+    // Redirect to the next page
+    window.location.href = "{% url 'Utrade:next_interests' %}";
+    
+    }
+</script>
+{% endblock content2 %}

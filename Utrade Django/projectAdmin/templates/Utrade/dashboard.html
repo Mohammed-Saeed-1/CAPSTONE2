@@ -1,0 +1,205 @@
+
+{% extends 'after_base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% load static %}
+
+{% block content2 %}
+
+    <h1>This is my dashboard</h1>
+
+    <a href="#" onclick="logoutAndRedirect()"><h1>Logout here</h1></a>
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ request.user.username }}!</p>
+    {% endif %}
+
+    {% comment %} {{ user_profile.image.url }} {% endcomment %}
+
+    <!-- Display user's image -->
+        {% comment %} <img src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}'s image"> {% endcomment %}
+
+    <script>
+        function logoutAndRedirect() {
+            // Clear localStorage
+            localStorage.clear();
+        
+            // Redirect to the logout URL
+            window.location.href = "{% url 'Utrade:logout' %}";
+        }
+        logoutAndRedirect()
+    </script>
+        
+
+
+
+    {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+    {% comment %} <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> {% endcomment %}
+
+    {% comment %} sending data to database through AJAX {% endcomment %}
+    <script>
+        // Wrap your code inside $(document).ready
+        /*const csrftoken = getCookie('csrftoken');
+
+        $.ajax({
+            type: 'POST',
+            url: '/save_favorite_stocks/',
+            data: {
+                favorite_stocks: ['Mohammed', 'yazen']
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }*/
+    </script>
+    
+    {% comment %} getting data from database through AJAX {% endcomment %}
+     <script>
+        /*let arr = []
+        $.ajax({
+            type: 'GET',
+            url: '/get_favorite_stocks/',
+            success: function (response) {
+                arr = response.favorite_stocks;
+                console.log(arr);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });*/
+    </script>
+
+
+
+
+
+
+    {% comment %} for Plans {% endcomment %}
+    <script>
+        // Wrap your code inside $(document).ready
+        /*const csrftoken = getCookie('csrftoken');
+        const arr = [{name: "Mohammed", Age:21, arr:[1,2,3]}, {name: "Yazen", Age:17, arr:[1,2,3]}]
+        const to_string = JSON.stringify(arr);
+
+        $.ajax({
+            type: 'POST',
+            url: '/save_plans/',
+            data: {
+                plans: to_string
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }*/
+    </script>
+
+    <script>
+        {% comment %} let userPlans = ""
+        $.ajax({
+            type: 'GET',
+            url: '/get_plans/',
+            success: function (response) {
+                userPlans = JSON.parse(response.plans);
+                console.log(userPlans);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        }); {% endcomment %}
+    </script>
+
+
+
+    {% comment %} for the wallet {% endcomment %}
+    <script>
+        // Wrap your code inside $(document).ready
+        /*const csrftoken = getCookie('csrftoken');
+        const amountOfMoney = 1000.05;
+
+        $.ajax({
+            type: 'POST',
+            url: '/save_wallet/',
+            data: {
+                wallet: amountOfMoney
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }*/
+    </script>
+
+    <script>
+        let amountOfMoney = 0;
+        $.ajax({
+            type: 'GET',
+            url: '/get_wallet/',
+            success: function (response) {
+                amountOfMoney = response.wallet;
+                console.log(amountOfMoney);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    </script>
+
+{% endblock content2 %}

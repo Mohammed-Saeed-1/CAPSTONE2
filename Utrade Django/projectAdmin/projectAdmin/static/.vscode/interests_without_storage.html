@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>UTRADE</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Favicons -->
+  <link href="assets/img/UTRADE_ICON-removebg-preview.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <!-- Google Fonts (You can keep only the fonts you use) -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Nunito:400,600|Poppins:400,500,600,700" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<style>
+  /* Custom CSS for table styling */
+  .symbol {
+      font-weight: bold;
+  }
+
+  .price, .change, .percentage-change {
+      font-weight: bold;
+  }
+
+  .positive-change {
+      color: #016e43;
+  }
+
+  .negative-change {
+      color: #c20404;
+  }
+
+  .dark-blue {
+      color: #003366;
+  }
+</style>
+
+<body onload="fetchStockNews_onload()">
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="interests.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="logo" style="padding-left: 40px;">
+      </a>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">UserName</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>UserName</h6>
+              <br>
+            </li>
+          <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li>
+            <li>
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <main id="main" class="main">
+
+    <!-- ... -->
+    <div class="card card-body">
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="input-group mb-3" style="margin-top: 20px;">
+              <input type="text" id="symbolInput" class="form-control" placeholder="Enter Stock Symbol">
+              <div class="input-group-append">
+                <button class="btn btn-primary" id="searchButton" type="button">Search</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end of search bar -->
+      <div class="first">
+        <h3 class="text-center my-4">Popular Tech Stocks</h3>
+        <div class="container">
+            <table class="table table-striped" id="table1">
+                <thead>
+                    <tr>
+                        <th>Favorite</th>
+                        <th class="symbol">Symbol</th>
+                        <th>Company Name</th>
+                        <th class="price">Last Price</th>
+                        <th class="change">Change</th>
+                        <th class="percentage-change">% Change</th>
+                        <th>Volume</th>
+                        <th>Avg Vol(3 month)</th>
+                        <th>Market Cap</th>
+                    </tr>
+                </thead>
+                <tbody id="stocks"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize an array to store favorite stock symbols
+        const favoriteStocks = [];
+    
+        // Function to format numbers in millions and billions
+        function formatNumber(num) {
+            if (num >= 1e9) {
+                return (num / 1e9).toFixed(2) + 'B';
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(2) + 'M';
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(2) + 'k';
+            } else {
+                return num;
+            }
+        }
+    
+        // Function to fetch and display data from the API
+        function fetchTechStocks() {
+            const apiKey = 'DZdHINhAKeEnsE6yDLBYFVI9lWOvPcLI';
+            const symbols = ["AAPL", "MSFT", "GOOG", "AMZN", "NVDA", "META", "TSLA", "BABA", "CRM", "AMD", "INTC", "ATVI", "PYPL", "TTD", "EA", "MTCH", "ZG", "YELP"];
+            const apiUrl = `https://financialmodelingprep.com/api/v3/quote-order/${symbols.join(",")}?apikey=${apiKey}`;
+    
+            // Fetch data from the API
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const stocks = data;
+    
+                    const stocksTable = document.getElementById('stocks');
+    
+                    stocks.forEach(stock => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><i class="fa ${favoriteStocks.includes(stock.symbol) ? 'fa-heart' : 'fa-heart-o'} favorite-icon"></i></td>
+                            <td class="symbol dark-blue" style="font-weight: bold;"><span class="text-primary">${stock.symbol}</span></td>
+                            <td>${stock.name}</td>
+                            <td class="price" style="font-weight: bold;">$${stock.price.toFixed(2)}</td>
+                            <td class="change" style="font-weight: bold; ${stock.change < 0 ? 'color: #c20404;' : 'color: #016e43;'}">${stock.change === 0 ? '-' : (stock.change > 0 ? '+' + stock.change.toFixed(2) : stock.change.toFixed(2))}</td>
+                            <td class="percentage-change" style="font-weight: bold; ${stock.changesPercentage < 0 ? 'color: #c20404;' : 'color: #016e43;'}">${stock.changesPercentage === 0 ? '-' : (stock.changesPercentage > 0 ? '+' + stock.changesPercentage.toFixed(2) : stock.changesPercentage.toFixed(2))}%</td>
+                            <td>${formatNumber(stock.volume)}</td>
+                            <td>${formatNumber(stock.avgVolume)}</td>
+                            <td>$${formatNumber(stock.marketCap)}</td>
+                        `;
+    
+                        stocksTable.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+    
+        // Call the function to load data when the page loads
+        window.onload = fetchTechStocks;
+    
+        // Add a click event listener to the entire table
+        document.getElementById("table1").addEventListener("click", function (event) {
+            if (event.target.tagName === "I" && event.target.classList.contains("favorite-icon")) {
+                // Toggle the favorite status when the heart icon is clicked
+                const symbol = event.target.parentElement.nextElementSibling.textContent; // Get the stock symbol
+                if (favoriteStocks.includes(symbol)) {
+                    // If already in favorites, remove it
+                    favoriteStocks.splice(favoriteStocks.indexOf(symbol), 1);
+                    event.target.classList.remove("fa-heart");
+                    event.target.classList.add("fa-heart-o");
+                } else {
+                    // If not in favorites, add it
+                    favoriteStocks.push(symbol);
+                    event.target.classList.remove("fa-heart-o");
+                    event.target.classList.add("fa-heart");
+                }
+            }
+            console.log(favoriteStocks);
+        });
+    </script>
+    
+      <!-- end of the popular stocks table -->
+
+
+      <div class="row Charts" style="display: none;">
+
+          <div class="col-12">
+              <div class="card" style="margin-top: 20px; background-color: rgb(217, 238, 254);">
+                  <div class="card-body">
+                      <h5 class="card-title">Chart <span>/Now</span></h5>
+                      <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+                          
+                          <div>
+                              <div class="container">
+                                  <table class="table table-striped-columns" id="table2">
+                                      <thead>
+                                          <tr>
+                                              <th>Favorite</th>
+                                              <th class="symbol">Symbol</th>
+                                              <th>Company Name</th>
+                                              <th class="price">Last Price</th>
+                                              <th class="change">Change</th>
+                                              <th class="percentage-change">% Change</th>
+                                              <th>Volume</th>
+                                              <th>Avg Vol(3 month)</th>
+                                              <th>Market Cap</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="stocks2"></tbody>
+                                  </table>
+                              </div>
+                          </div>
+                          <!-- end of stock informations -->
+
+                          <div id="tradingview" style="width: 100%; height: 550px;"></div>
+
+                      <div class="tradingview-widget-copyright"></div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+      <!-- end of search charts -->
+
+
+    </div>
+    
+  
+
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+      function loadStockChart() {
+        var symbol = document.getElementById("symbolInput").value;
+
+        // Check if the input is empty
+        if (symbol.trim() === "") {
+          return; // Do nothing if the input is empty
+        }
+  
+        var containerId = "tradingview";
+        new TradingView.widget({
+          "autosize": true,
+          "symbol": symbol,
+          "interval": "D",
+          "timezone": "Asia/Kuwait",
+          "theme": "light",
+          "style": "1",
+          "locale": "en",
+          "enable_publishing": false,
+          "allow_symbol_change": true,
+          "container_id": containerId
+        });
+  
+        // Show the "Charts" div
+        document.querySelector(".Charts").style.display = "block";
+  
+        // Hide the "first" div
+        document.querySelector(".first").style.display = "none"; // No "first" class in your code
+      }
+  
+      document.getElementById("symbolInput").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          loadStockChart();
+          fetchTechStocks2();
+        }
+      });
+  
+      document.getElementById("searchButton").addEventListener("click", loadStockChart);
+  
+      //************************************************************************************************
+  
+      // Function to format numbers in millions and billions
+      function formatNumber(num) {
+          if (num >= 1e9) {
+              return (num / 1e9).toFixed(2) + 'B';
+          } else if (num >= 1e6) {
+              return (num / 1e6).toFixed(2) + 'M';
+          } else if (num >= 1e3) {
+              return (num / 1e3).toFixed(2) + 'k';
+          } else {
+              return num;
+          }
+      }
+  
+      // Function to fetch and display data from the API
+      // Function to fetch and display data from the API
+  function fetchTechStocks2() {
+      const apiKey = 'DZdHINhAKeEnsE6yDLBYFVI9lWOvPcLI';
+      const symbol = document.getElementById("symbolInput").value;
+      const apiUrl = `https://financialmodelingprep.com/api/v3/quote-order/${symbol}?apikey=${apiKey}`;
+  
+      // Fetch data from the API
+      fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+              const stocks = data;
+
+              const stocksTable = document.getElementById('stocks2');
+  
+              // Check if a row with the same symbol already exists
+              const existingRow = stocksTable.querySelector(`tr[data-symbol="${symbol}"]`);
+  
+              if (existingRow) {
+                  // Update the existing row with new data
+                  const row = existingRow;
+                  row.innerHTML = `
+                      <td><i class="fa fa-heart-o favorite-icon"></i></td>
+                      <td class="symbol dark-blue" style="font-weight: bold;"><span class="text-primary">${stocks[0].symbol}</span></td>
+                      <td>${stocks[0].name}</td>
+                      <td class="price" style="font-weight: bold;">$${stocks[0].price.toFixed(2)}</td>
+                      <td class="change" style="font-weight: bold; ${stocks[0].change < 0 ? 'color: #c20404;' : 'color: #016e43;'}">${stocks[0].change === 0 ? '-' : (stocks[0].change > 0 ? '+' + stocks[0].change.toFixed(2) : stocks[0].change.toFixed(2))}</td>
+                      <td class="percentage-change" style="font-weight: bold; ${stocks[0].changesPercentage < 0 ? 'color: #c20404;' : 'color: #016e43;'}">${stocks[0].changesPercentage === 0 ? '-' : (stocks[0].changesPercentage > 0 ? '+' + stocks[0].changesPercentage.toFixed(2) : stocks[0].changesPercentage.toFixed(2))}%</td>
+                      <td>${formatNumber(stocks[0].volume)}</td>
+                      <td>${formatNumber(stocks[0].avgVolume)}</td>
+                      <td>$${formatNumber(stocks[0].marketCap)}</td>
+                  `;
+              } else {
+                  // Create a new row and append it to the table
+                  const row = document.createElement('tr');
+                  row.dataset.symbol = symbol;
+                  var icon = "fa-heart-o";
+                  if (favoriteStocks.includes(symbol))
+                    icon = "fa-heart"
+                  row.innerHTML = `
+                      <td><i class="fa ${icon} favorite-icon"></i></td>
+                      <td class="symbol dark-blue" style="font-weight: bold;"><span class="text-primary">${stocks[0].symbol}</span></td>
+                      <td>${stocks[0].name}</td>
+                      <td class="price" style="font-weight: bold;">$${stocks[0].price.toFixed(2)}</td>
+                      <td class="change" style="font-weight: bold; ${stocks[0].change < 0 ? 'color: #c20404;' : 'color: #016e43;'}">${stocks[0].change === 0 ? '-' : (stocks[0].change > 0 ? '+' + stocks[0].change.toFixed(2) : stocks[0].change.toFixed(2))}</td>
+                      <td class="percentage-change" style="font-weight: bold; ${stocks[0].changesPercentage < 0 ? 'color: #c20404;' : 'color: #016e43;'}">${stocks[0].changesPercentage === 0 ? '-' : (stocks[0].changesPercentage > 0 ? '+' + stocks[0].changesPercentage.toFixed(2) : stocks[0].changesPercentage.toFixed(2))}%</td>
+                      <td>${formatNumber(stocks[0].volume)}</td>
+                      <td>${formatNumber(stocks[0].avgVolume)}</td>
+                      <td>$${formatNumber(stocks[0].marketCap)}</td>
+                  `;
+                  stocksTable.appendChild(row);
+              }
+          })
+          .catch(error => console.error('Error fetching data:', error));
+      }
+  
+  
+      // Call the function to load data when the page loads
+      window.onload = fetchTechStocks;
+      document.getElementById("table2").addEventListener("click", function (event) {
+            if (event.target.tagName === "I" && event.target.classList.contains("favorite-icon")) {
+                // Toggle the favorite status when the heart icon is clicked
+                const symbol = event.target.parentElement.nextElementSibling.textContent; // Get the stock symbol
+                if (favoriteStocks.includes(symbol)) {
+                    // If already in favorites, remove it
+                    favoriteStocks.splice(favoriteStocks.indexOf(symbol), 1);
+                    event.target.classList.remove("fa-heart");
+                    event.target.classList.add("fa-heart-o");
+                } else {
+                    // If not in favorites, add it
+                    favoriteStocks.push(symbol);
+                    event.target.classList.remove("fa-heart-o");
+                    event.target.classList.add("fa-heart");
+                }
+            }
+            console.log(favoriteStocks);
+        });
+      
+    </script>
+
+  </main>
+  <footer id="footer" class="footer" style="margin-top: 50px;">
+    <div class="copyright">
+      <a href="#">&copy; Copyright <strong><span>UTRADE</span></strong>.</a>
+    </div>
+  </footer>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
+

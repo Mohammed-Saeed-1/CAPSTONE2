@@ -1,0 +1,265 @@
+{% extends 'before_base.html' %}
+{% block title %}Next Interests{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    .symbol {
+        font-weight: bold;
+    }
+
+    .price, .change, .percentage-change {
+        font-weight: bold;
+    }
+
+    .image-small {
+        width: 25px;
+        border-radius: 10px;
+    }
+
+    .favorite-icon {
+        color: black !important; /* Use !important to ensure this style takes precedence */
+    }
+    .scrollable-div {
+        overflow-x: auto;
+    }
+    .the_card_titles{
+        font-size: x-large;
+    }
+
+</style>
+{% endblock content %}
+    
+{% block content2 %}
+<main>
+    <div class="container mt-5 py-4">
+        <h1 style="text-align: center;">Select Your Favorite Stocks</h1>
+
+        <!-- Display selected interests and corresponding stocks -->
+        <div id="stocks-container" class="d-flex flex-wrap justify-content-center">
+            <!-- Stock cards will be dynamically added here -->
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a><button id="TheNextBtn" class="btn btn-primary mt-3">Next</button></a>
+            {% comment %} href="{% url 'Utrade:portfolio' %}" {% endcomment %}
+        </div>
+    </div>
+</main>
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    const favoriteStocks = JSON.parse(localStorage.getItem('favoriteStocks')) || [];
+
+    function saveFavoriteStocksToLocalStorage() {
+        localStorage.setItem('favoriteStocks', JSON.stringify(favoriteStocks));
+    }
+
+    function formatNumber(num) {
+        if (num >= 1e9) {
+            return (num / 1e9).toFixed(2) + 'B';
+        } else if (num >= 1e6) {
+            return (num / 1e6).toFixed(2) + 'M';
+        } else if (num >= 1e3) {
+            return (num / 1e3).toFixed(2) + 'k';
+        } else {
+            return num;
+        }
+    }
+
+    function toggleFavorite(symbol) {
+        if (favoriteStocks.includes(symbol)) {
+            favoriteStocks.splice(favoriteStocks.indexOf(symbol), 1);
+        } else {
+            favoriteStocks.push(symbol);
+        }
+
+        updateFavoriteIcons();
+        saveFavoriteStocksToLocalStorage();
+    }
+
+    function updateFavoriteIcons() {
+        const favoriteIcons = document.querySelectorAll(".favorite-icon");
+        favoriteIcons.forEach(icon => {
+            const symbolElement = icon.closest("tr").querySelector(".symbol");
+            if (symbolElement) {
+                const symbol = symbolElement.textContent.trim();
+                if (favoriteStocks.includes(symbol)) {
+                    icon.classList.remove("fa-heart-o");
+                    icon.classList.add("fa-heart");
+                } else {
+                    icon.classList.remove("fa-heart");
+                    icon.classList.add("fa-heart-o");
+                }
+            }
+        });
+    }
+
+    const selectedInterests = JSON.parse(localStorage.getItem('selectedInterests')) || [];
+
+    const interestToSymbols = {
+        "Interest 1": ["MSFT", "AAPL", "GOOGL", "CRM", "INTU", "ORCL", "ADBE", "VMW", "IBM", "RHT"],
+        "Interest 2": ["NVDA", "AMD", "INTC", "BIDU", "IBM", "GOOGL", "AMZN", "MSFT", "TSLA", "FB"],
+        "Interest 3": ["PANW", "CYBR", "FTNT", "CHKP", "SPLK", "CRWD", "OKTA", "ZS", "SYMC", "FSLY"],
+        "Interest 4": ["AMZN", "MSFT", "GOOGL", "CRM", "IBM", "RHT", "NOW", "TWLO", "VMW", "AKAM"],
+        "Interest 5": ["CRM", "ADBE", "CRM", "SPLK", "ACN", "IBM", "DDOG", "TTD", "ORCL", "CRM"],
+        "Interest 6": ["INTC", "CSCO", "IBM", "AMZN", "TSLA", "HON", "ABB", "SI", "SWKS", "QCOM"],
+        "Interest 7": ["V", "MA", "AXP", "GS", "JPM", "BAC", "WFC", "C", "MS", "BLK"],
+        "Interest 8": ["AAPL", "HPQ", "DELL", "IBM", "INTC", "AMD", "NVDA", "AVGO", "STM", "TXN"]
+    };
+
+    const InterestName = {
+        "Interest 1": "Software",
+        "Interest 2": "Artificial intelligence",
+        "Interest 3": "Cybersecurity",
+        "Interest 4": "Cloud Computing",
+        "Interest 5": "Data Science",
+        "Interest 6": "Internet of Things",
+        "Interest 7": "Machine Learning",
+        "Interest 8": "Semiconductors"
+    }
+
+    const stocksContainer = document.getElementById('stocks-container');
+
+    selectedInterests.forEach(interest => {
+        const symbols = interestToSymbols[interest];
+
+        const card = document.createElement('div');
+        card.classList.add('col-md-12', 'mb-12', 'scrollable-div');
+        card.innerHTML = `
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title the_card_titles">${InterestName[interest]} Stocks</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Favorite</th>
+                                    <th>Logo</th>
+                                    <th class="symbol">Symbol</th>
+                                    <th>Company Name</th>
+                                    <th>Market Cap</th>
+                                    <th class="price">Last Price</th>
+                                    <th>Avg Vol(3 month)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="${interest.toLowerCase()}StocksList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+        stocksContainer.appendChild(card);
+
+        fetchTechStocks(interest.toLowerCase(), symbols);
+    });
+
+    function fetchTechStocks(interestKey, symbols) {
+        const apiKey = 'FnmypkCJXo2N0ejSmZDeyXgJIvKAFVS8';
+        //const apiKey = 'hyVSthYNOyrZg6X0L6B19DBYXUP5JDyJ';
+        const apiUrl = `https://financialmodelingprep.com/api/v3/quote-order/${symbols.join(",")}?apikey=${apiKey}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const techStocksList = document.getElementById(`${interestKey}StocksList`);
+                const stocks = data;
+
+                // Sort stocks based on market cap in descending order
+                stocks.sort((a, b) => b.marketCap - a.marketCap);
+
+                stocks.forEach(stock => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><button class="btn btn-link">
+                            <i class="fa ${favoriteStocks.includes(stock.symbol) ? 'fa-heart' : 'fa-heart-o'} favorite-icon"></i>
+                        </button></td>
+                        <td><img src="https://fmpcloud.io/image-stock/${stock.symbol}.png" alt="${stock.name}" onerror="this.style.display='none'" class="image-small"></td>
+                        <td class="symbol dark-blue" style="font-weight: bold;"><span class="text-primary">${stock.symbol}</span></td>
+                        <td>${stock.name}</td>
+                        <td>$${formatNumber(stock.marketCap)}</td>
+                        <td class="price" style="font-weight: bold;">$${stock.price.toFixed(2)}</td>
+                        <td>${formatNumber(stock.avgVolume)}</td>
+                    `;
+                    techStocksList.appendChild(row);
+                });
+
+                updateFavoriteIcons();
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+
+    stocksContainer.addEventListener("click", function (event) {
+        const target = event.target;
+        if (target.classList.contains("favorite-icon")) {
+            const symbolElement = target.closest("tr").querySelector(".symbol");
+            if (symbolElement) {
+                const symbol = symbolElement.textContent.trim();
+                toggleFavorite(symbol);
+                updateFavoriteIcons();
+                saveFavoriteStocksToLocalStorage();
+            }
+        }
+    });
+
+    window.onload = function () {
+        updateFavoriteIcons();
+    };
+
+
+
+
+
+
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.getElementById('TheNextBtn').addEventListener('click', ()=>{
+        // Send an AJAX request to the Django backend
+        const csrftoken = getCookie('csrftoken');
+
+        $.ajax({
+            type: 'POST',
+            url: '/save_favorite_stocks/',
+            data: {
+                favorite_stocks: favoriteStocks
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+
+        window.location.href = "{% url 'Utrade:portfolio' %}";
+    })
+</script>
+{% endblock content2 %}
