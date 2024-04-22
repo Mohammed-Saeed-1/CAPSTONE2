@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-pelv514gt56b88!y-dsrl!=m!*0p5r#*&1)^-0-ksx*pui3^h2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', '34.212.20.170']
 # example '192.168.137.1'
 
 
@@ -141,4 +141,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ]
 
 
-ALLOWED_HOSTS = ["54.244.187.30", "ec2-54-244-187-30.us-west-2.compute.amazonaws.com"]
+# ALLOWED_HOSTS = ["54.244.187.30", "ec2-54-244-187-30.us-west-2.compute.amazonaws.com"]
