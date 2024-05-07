@@ -24,6 +24,12 @@ def dashboard(request):
     user_profile = UserProfile.objects.get(user=request.user)
     return render(request, 'Utrade/dashboard.html', {'user_profile': user_profile})
 
+def home(request):
+    return render(request, 'Utrade/home.html')
+
+def for_testing(request):
+    return render(request, 'Utrade/for_testing.html')
+
 
 
 
@@ -45,6 +51,7 @@ def register(request):
         # Create a UserProfile instance for the new user
         UserProfile.objects.create(user=my_user)
 
+        request.session['first_login'] = True
         return redirect('/login')
         # print(username, email, password)
     return render(request, 'Utrade/pages-register.html')
@@ -68,7 +75,11 @@ def Login(request):
 
 @login_required(login_url="/login")
 def first_interests(request):
-    return render(request, 'Utrade/first_interests.html')
+    if request.session.get('first_login', False):  # Check if it's the first login
+            request.session['first_login'] = False
+            return render(request, 'Utrade/first_interests.html')
+    else:
+        return redirect('/portfolio')  # Redirect to portfolio if it's not the first login
 
 @login_required(login_url="/login")
 def next_interests(request):
@@ -389,3 +400,34 @@ def add_stock_data(request):
         return JsonResponse({'status': 'success', 'message': 'Data added successfully'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    
+
+
+
+
+
+
+from .models import NewsPrediction
+# news_predictions (step 2) build a get route
+def news_prediction_json(request):
+    news_predictions = NewsPrediction.objects.all()
+    data = [{'symbol': prediction.symbol, 'prediction': prediction.prediction, 'time': prediction.time.strftime('%H:%M:%S')} for prediction in news_predictions]
+    return JsonResponse(data, safe=False)
+
+
+
+from .models import FinancialReportPrediction
+def financial_prediction_json(request):
+    financial_predictions = FinancialReportPrediction.objects.all()
+    data = [{'symbol': prediction.symbol, 'prediction': prediction.prediction} for prediction in financial_predictions]
+    return JsonResponse(data, safe=False)
+
+
+
+
+from .models import HistoricalPrediction
+
+def prediction_list_json(request):
+    predictions = HistoricalPrediction.objects.all()
+    data = [{'symbol': prediction.symbol, 'next_close_prediction': prediction.next_close_prediction, 'next_week_prediction': prediction.next_week_prediction, 'next_biweek_prediction': prediction.next_biweek_prediction, 'next_triweek_prediction': prediction.next_triweek_prediction, 'next_month_prediction': prediction.next_month_prediction} for prediction in predictions]
+    return JsonResponse(data, safe=False)

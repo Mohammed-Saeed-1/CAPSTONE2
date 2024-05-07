@@ -1,0 +1,108 @@
+<!-- news_prediction_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Predictions</title>
+</head>
+<body>
+    <h1>News Predictions</h1>
+    <ul id="predictions-list"></ul>
+
+    
+    <script>
+
+        {% comment %} for news_predictions {% endcomment %}
+        async function fetchNewsPredictions() {
+            try {
+                const response = await fetch("/news_predictions/");
+                const data = await response.json();
+        
+                const predictionsData = data.reduce((acc, cur) => {
+                    acc[cur.symbol] = cur.prediction;
+                    return acc;
+                }, {});
+        
+                return predictionsData; // Assign fetched data to news_predictions
+        
+                // Perform any operations that rely on news_predictions here
+                //console.log(news_predictions);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        {% comment %} for financial_report_predictions {% endcomment %}
+        async function fetchFinancialReportPredictions() {
+            try {
+                const response = await fetch("/financial_predictions/");
+                const data = await response.json();
+        
+                const predictionsData = data.reduce((acc, cur) => {
+                    acc[cur.symbol] = cur.prediction;
+                    return acc;
+                }, {});
+        
+                return predictionsData; // Assign fetched data to news_predictions
+        
+                // Perform any operations that rely on news_predictions here
+                //console.log(news_predictions);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        
+        {% comment %} for historical predictions {% endcomment %}
+        async function fetchHistoricalPredictions() {
+            try {
+                const response = await fetch("/predictions/");
+                const data = await response.json();
+        
+                const formattedData = {};
+                data.forEach(item => {
+                    formattedData[item.symbol] = {
+                        next_close_prediction: item.next_close_prediction,
+                        next_week_prediction: item.next_week_prediction,
+                        next_biweek_prediction: item.next_biweek_prediction,
+                        next_triweek_prediction: item.next_triweek_prediction,
+                        next_month_prediction: item.next_month_prediction
+                    };
+                });
+                //console.log(formattedData); // Log the data here if needed
+                return formattedData;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return null;
+            }
+        }
+        
+        async function main() {
+            let news_predictions = await fetchNewsPredictions(); // Wait for fetchData() to complete
+            console.log(news_predictions); // usage: news_predictions["AAPL"]
+
+            let financial_report_predictions = await fetchFinancialReportPredictions(); // Wait for fetchData() to complete
+            console.log(financial_report_predictions); // usage: news_predictions["AAPL"]
+
+            let historical_predictions = await fetchHistoricalPredictions();
+            console.log(historical_predictions);//usage: historical_predictions["AAPL"]["next_close_prediction"]
+        }
+        
+        main();
+
+    </script>
+</body>
+</html>
+
+
+
+{% comment %} fetch("/news_predictions/")
+    .then(response => response.json())
+    .then(data => {
+        const predictionsData = data.reduce((acc, cur) => {
+            acc[cur.symbol] = cur.prediction;
+            return acc;
+        }, {});
+
+        console.log(predictionsData);
+    })
+    .catch(error => console.error("Error fetching data:", error)); {% endcomment %}

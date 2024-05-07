@@ -4,14 +4,27 @@
 
 {% load static %}
 
+{% block content %}
+<style>
+  #spinnerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+{% endblock content %}
+
 {% block content2 %}
 
-    <h1>This is my dashboard</h1>
+    <h1>Signing Out</h1>
+    <div id="spinnerContainer">
+        <div id="spinner" class="spinner-border text-primary" role="status"></div>
+    </div>
 
-    <a href="#" onclick="logoutAndRedirect()"><h1>Logout here</h1></a>
-    {% if user.is_authenticated %}
+    {% comment %} {% if user.is_authenticated %}
         <p>Welcome, {{ request.user.username }}!</p>
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     {% comment %} {{ user_profile.image.url }} {% endcomment %}
 
@@ -19,18 +32,23 @@
         {% comment %} <img src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}'s image"> {% endcomment %}
 
     <script>
-        function logoutAndRedirect() {
-            // Clear localStorage
-            localStorage.clear();
-        
-            // Redirect to the logout URL
-            window.location.href = "{% url 'Utrade:logout' %}";
+        async function logoutAndRedirect() {
+            try {
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Redirect to the logout URL after a brief delay
+                await new Promise(resolve => setTimeout(resolve, 100)); // Show the spinner for 1 second
+                window.location.href = "{% url 'Utrade:logout' %}";
+            } catch (error) {
+                console.error("Error during logout:", error);
+                // Handle errors if needed
+            }
         }
-        logoutAndRedirect()
+        
+        logoutAndRedirect();
     </script>
         
-
-
 
     {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
     {% comment %} <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> {% endcomment %}

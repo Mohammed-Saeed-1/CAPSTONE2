@@ -4,71 +4,91 @@
 {% load static %}
 
 {% block content %}
+<style>
+  #spinnerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
 {% endblock content %}
 
 {% block content2 %}
 
 <main id="main" class="main">
-  <div class="pagetitle">
-    <h1>Test Your Plan:</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Trade</li>
-      </ol>
-    </nav>
-  </div><!-- End Page Title -->
-  
-  <div class="container mt-5">
-    <form id="stock-selection-form">
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="stock-symbols" class="form-label">Enter the Stocks symbol (separated with a comma):</label>
-          <input type="text" class="form-control" id="stock-symbols" name="stock-symbols" required>
-          <div style="display: flex; align-items: center;">
-            <span id="symbols_warning_message" style="display: none; color: red; font-size: small;">Undefined symblols: </span>
-            <span id="symbols_warning_message3" style="display: none; color: red; font-size: small;">These symbols are not in technology sector: </span>
-            <span id="symbols_warning_message2" style=" color: red; font-size: small;"></span>
+  <div id="spinnerContainer">
+    <div id="spinner" class="spinner-border text-primary" role="status"></div>
+  </div>
+  <div id="content" style="display: none;">
 
+    <div class="pagetitle">
+      <h1>Test Your Plan:</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active">Trading</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+    <div class="container mt-5">
+      <form id="stock-selection-form">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="stock-symbols" class="form-label">Enter the Stocks symbol (separated with a comma):</label>
+            <input type="text" class="form-control" id="stock-symbols" name="stock-symbols" required>
+            <div style="display: flex; align-items: center;">
+              <span id="symbols_warning_message" style="display: none; color: red; font-size: small;">Undefined symblols: </span>
+              <span id="symbols_warning_message3" style="display: none; color: red; font-size: small;">These symbols are not in technology sector: </span>
+              <span id="symbols_warning_message2" style=" color: red; font-size: small;"></span>
+
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="due-date" class="form-label">Select the expected selling date:</label>
-          <input type="date" class="form-control" id="due-date" name="due-date" required>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="due-date" class="form-label">Select the expected selling date:</label>
+            <input type="date" class="form-control" id="due-date" name="due-date" required>
+          </div>
         </div>
-      </div>
-  
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="initial-amount" class="form-label">Enter the initial amount:</label>
-          <input type="number" class="form-control" id="initial-amount" name="initial-amount" required>
-          <p id="wallet_warning_message" style="display: none; color: red; font-size: small;">You do not have enough money in your wallet to complete this process.
-            Go to your <a href = "{% url 'Utrade:portfolio' %}">protfolio</a> to edit the wallet, or try entering a smaller amount</p>
+    
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="initial-amount" class="form-label">Enter the initial amount:</label>
+            <input type="number" class="form-control" id="initial-amount" name="initial-amount" required>
+            <p id="wallet_warning_message" style="display: none; color: red; font-size: small;">You do not have enough money in your wallet to complete this process.
+              Go to your <a href = "{% url 'Utrade:portfolio' %}">protfolio</a> to edit the wallet, or try entering a smaller amount</p>
+          </div>
         </div>
-      </div>
-  
-      <button type="submit" class="btn btn-primary">Next</button>
-    </form>
-  </div>
+    
+        <button type="submit" class="btn btn-primary">Next</button>
+      </form>
+    </div>
+
+</div>
+
 </main><!-- End #main -->
 
 {% comment %} Getting data {% endcomment %}
 <script>
-  var wallet = 0;
-  $.ajax({
-      type: 'GET',
-      url: '/get_wallet/',
-      success: function (response) {
-          wallet = response.wallet;
-          console.log(wallet);
-          localStorage.setItem('wallet',wallet);
-      },
-      error: function (error) {
-          console.error(error);
-      }
-  });
+
+  // Show spinner when starting loading
+  document.getElementById('spinner').style.display = 'block';
+
+  async function fetchWalletValue() {
+    try {
+        const response = await fetch('/get_wallet/');
+        if (!response.ok) {
+            throw new Error('Failed to fetch wallet value');
+        }
+        const data = await response.json();
+        return data.wallet;
+    } catch (error) {
+        console.error(error);
+        throw error; // Rethrow the error for handling elsewhere if needed
+    }
+  }
   
   function makeAjaxRequest_Plans() {
     return new Promise(function (resolve, reject) {
@@ -110,11 +130,65 @@
     });
   }
 
+  {% comment %} for historical predictions {% endcomment %}
+  async function fetchHistoricalPredictions() {
+    try {
+        const response = await fetch("/predictions/");
+        const data = await response.json();
+
+        const formattedData = {};
+        data.forEach(item => {
+            formattedData[item.symbol] = {
+                next_close_prediction: item.next_close_prediction,
+                next_week_prediction: item.next_week_prediction,
+                next_biweek_prediction: item.next_biweek_prediction,
+                next_triweek_prediction: item.next_triweek_prediction,
+                next_month_prediction: item.next_month_prediction
+            };
+        });
+        //console.log(formattedData); // Log the data here if needed
+        return formattedData;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
+  }
+
+  {% comment %} for financial_report_predictions {% endcomment %}
+  async function fetchFinancialReportPredictions() {
+    try {
+        const response = await fetch("/financial_predictions/");
+        const data = await response.json();
+
+        const predictionsData = data.reduce((acc, cur) => {
+            acc[cur.symbol] = cur.prediction;
+            return acc;
+        }, {});
+
+        return predictionsData; // Assign fetched data to news_predictions
+
+        // Perform any operations that rely on news_predictions here
+        //console.log(news_predictions);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+  }
 </script>
 
 <script>
-  makeAjaxRequest_Plans().then(function () {
-    console.log("HELLO")
+  makeAjaxRequest_Plans().then(async function () {
+    let wallet = await fetchWalletValue();
+    console.log("1")
+    console.log(wallet)
+    let historical_predictions = await fetchHistoricalPredictions();
+    console.log("2")
+    let financial_report_predictions = await fetchFinancialReportPredictions();
+    console.log("3")
+    console.log("Ready")
+
+    // Hide spinner and show content when loading is finished
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
     
 
     var stockDataArray = JSON.parse(localStorage.getItem("stockDataArray")) || [];
@@ -167,18 +241,14 @@
           }
           // Fetch the price for each symbol from the API
           const apiUrl = `https://financialmodelingprep.com/api/v3/quote-order/`;
-          const apiKey = 'hyVSthYNOyrZg6X0L6B19DBYXUP5JDyJ';
+          //const apiKey = 'hyVSthYNOyrZg6X0L6B19DBYXUP5JDyJ';
+          //const apiKey = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
           //const apiKey = '0f08f20f61c268804f9e94f55246c81a';
-          //const apiKey = 'FnmypkCJXo2N0ejSmZDeyXgJIvKAFVS8';
-          //another apikey => k0wOZwaeBqPBeeutNskntC6QdhCCK4WY
+          const apiKey = 'FnmypkCJXo2N0ejSmZDeyXgJIvKAFVS8';
 
           const TechnologySymbols = [
-            "AAPL", "MSFT", "GOOGL", "AMZN", "FB","GOOG",
-            "INTC", "AMD", "NVDA", "TXN", "QCOM",
-            "IBM", "ORCL", "CSCO", "HPQ", "AAP", "CRM", "NOW", "ADBE", "SAP", "VMW",
-            "TSLA", "NFLX", "TWTR", "UBER", "PYPL", "V", "MA", "INTU", "EBAY", "SQ",
-            "AMD", "MU", "AMAT", "AVGO", "LRCX", "KLAC", "ADI", "SWKS", "NXPI",
-            "XLNX", "MRVL", "TSM", "TXN", "INTC", "CSCO", "HPQ", "DXC", "WDC", "STX"
+            "AAPL", "MSFT", "GOOGL", "AMZN",
+            "INTC", "NVDA", "IBM","TSLA", "META"
           ];
           var sucsess = true;
           document.getElementById('symbols_warning_message2').textContent = "";
@@ -212,8 +282,41 @@
                     })
                     .then(data => {
                         const sharePrice = data[0].price;
+
+                        const selling_date = document.getElementById("due-date").value;
+                        const today = new Date();
+                        // Convert selling_date to a Date object
+                        const prevDateObj = new Date(selling_date);
+                        // Calculate the difference in milliseconds
+                        const timeDiff = prevDateObj.getTime() - today.getTime();
+                        // Convert milliseconds to days
+                        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+                        let prediction = 0;
+
+                        if (!(symbol in historical_predictions) || (daysDiff < 0)) {
+                            prediction = 0; // Symbol doesn't exist in historical predictions, set prediction to 0
+                        } else if (daysDiff >= 0 && daysDiff <= 3) {
+                            prediction = historical_predictions[symbol]["next_close_prediction"];
+                        } else if (daysDiff > 3 && daysDiff <= 10) {
+                            prediction = historical_predictions[symbol]["next_week_prediction"];
+                        } else if (daysDiff > 10 && daysDiff <= 17) {
+                            prediction = historical_predictions[symbol]["next_biweek_prediction"];
+                        } else if (daysDiff > 17 && daysDiff <= 24) {
+                            prediction = historical_predictions[symbol]["next_triweek_prediction"];
+                        } else if (daysDiff > 24 && daysDiff <= 31) {
+                            if(historical_predictions[symbol]["next_month_prediction"] == financial_report_predictions[symbol]){
+                              prediction = historical_predictions[symbol]["next_month_prediction"];
+                            }else{
+                              prediction = 0;
+                            }
+                            //prediction = historical_predictions[symbol]["next_month_prediction"];
+                        } else {
+                            prediction = 0;
+                        }
+
                         // Create an object for each symbol with 1 share and the price
-                        const symbolData = { symbol: symbol, shares: 1, price: Number(sharePrice), finalPrice: 0 };
+                        const symbolData = { symbol: symbol, shares: 1, price: Number(sharePrice), prediction: prediction };
                         trade.data.push(symbolData);
                     })
                     .catch(error => {

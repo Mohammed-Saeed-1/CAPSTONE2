@@ -9,11 +9,13 @@ urlpatterns = [
 
     path('dashboard' ,views.dashboard , name='dashboard'),
     path('logout' ,views.Logout , name='logout'),
+
+    path('' ,views.home , name='home'),
+    path('for_testing' ,views.for_testing , name='for_testing'),
     
 
     path('register' ,views.register , name='register'),
     path('login' ,views.Login , name='login'),
-    path('' ,views.Login , name='login'), #this rout should be for home page
 
     path('first_interests' ,views.first_interests , name='first_interests'),
     path('next_interests' ,views.next_interests , name='next_interests'),
@@ -55,6 +57,13 @@ urlpatterns = [
 
     path('get_stock_data/', views.get_stock_data, name='get_stock_data'),
     path('add_stock_data/', views.add_stock_data, name='add_stock_data'),
+
+
+
+    #news_predictions (step 3) create a url for the route then (step 4) after makemigerations, ==>python manage.py migrate --fake UTRADE  
+    path('news_predictions/', views.news_prediction_json, name='news_prediction_json'),
+    path('financial_predictions/', views.financial_prediction_json, name='financial_prediction_json'),
+    path('predictions/', views.prediction_list_json, name='prediction_list_json'),
 ]
 
 

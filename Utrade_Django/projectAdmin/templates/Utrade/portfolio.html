@@ -5,6 +5,12 @@
 
 {% block content %}
 <style>
+  #spinnerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
   main .card:hover {
     transform: scale(1.05);
   }
@@ -98,6 +104,10 @@
 
 {% block content2 %}
 <main id="main" class="main">
+
+  <div id="spinnerContainer">
+    <div id="spinner" class="spinner-border text-primary" role="status"></div>
+  </div>
 
   <div class="pagetitle">
       <h1 style="color:rgb(33, 33, 190); margin-bottom: 30px; margin-top: 13px;"><b>Your Portfolio</b></h1>
@@ -282,11 +292,13 @@
                     // Log the parsed userPlans for debugging
                     console.log('Parsed User Plans:', userPlans);
 
+                    document.getElementById('spinner').style.display = 'none';
                     // Store the plans in localStorage
                     localStorage.setItem("stockDataArray", JSON.stringify(userPlans));
 
                     resolve(); // Resolve the promise on successful completion
                 } catch (parseError) {
+                    document.getElementById('spinner').style.display = 'none';
                     console.error('Error parsing server response:', parseError);
                     reject(parseError); // Reject the promise on parse error
                 }
@@ -331,6 +343,7 @@
         });
     });
   }
+
 </script>
 
 {% comment %} second script (sending or updating data from DB) {% endcomment %}
@@ -338,41 +351,49 @@
   const csrftoken = getCookie('csrftoken');
 
   //Plans
-  function update_plans(newPlans){
-      const newPlans_string = JSON.stringify(newPlans);
+  function update_plans(newPlans) {
+    return new Promise((resolve, reject) => {
+        const newPlans_string = JSON.stringify(newPlans);
 
-      $.ajax({
-          type: 'POST',
-          url: '/save_plans/',
-          data: {
-              plans: newPlans_string
-          },
-          headers: { 'X-CSRFToken': csrftoken },
-          success: function (response) {
-              console.log(response);
-          },
-          error: function (error) {
-              console.error(error);
-          }
-      });
+        $.ajax({
+            type: 'POST',
+            url: '/save_plans/',
+            data: {
+                plans: newPlans_string
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+                resolve(); // Resolve the promise when successful
+            },
+            error: function (error) {
+                console.error(error);
+                reject(error); // Reject the promise on error
+            }
+        });
+    });
   }
 
   //Wallet
-  function update_wallet(newWallet){
-    console.log("New Wallet: " + newWallet);
-    $.ajax({
-        type: 'POST',
-        url: '/save_wallet/',
-        data: {
-            wallet: newWallet
-        },
-        headers: { 'X-CSRFToken': csrftoken },
-        success: function (response) {
-            console.log(response);
-        },
-        error: function (error) {
-            console.error(error);
-        }
+  function update_wallet(newWallet) {
+    return new Promise((resolve, reject) => {
+        console.log("New Wallet: " + newWallet);
+        $.ajax({
+            type: 'POST',
+            url: '/save_wallet/',
+            data: {
+                wallet: newWallet
+            },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                console.log(response);
+                resolve(); // Resolve the promise when successful
+            },
+            error: function (error) {
+                console.error(error);
+                reject(error); // Reject the promise on error
+            }
+        });
     });
   }
 
@@ -391,15 +412,111 @@
       }
       return cookieValue;
   }
+
+
+
+  {% comment %} for news_predictions {% endcomment %}
+  async function fetchNewsPredictions() {
+    try {
+        const response = await fetch("/news_predictions/");
+        const data = await response.json();
+
+        const predictionsData = data.reduce((acc, cur) => {
+            acc[cur.symbol] = cur.prediction;
+            return acc;
+        }, {});
+
+        return predictionsData; // Assign fetched data to news_predictions
+
+        // Perform any operations that rely on news_predictions here
+        //console.log(news_predictions);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+  }
+
+  {% comment %} for historical predictions {% endcomment %}
+  async function fetchHistoricalPredictions() {
+    try {
+        const response = await fetch("/predictions/");
+        const data = await response.json();
+
+        const formattedData = {};
+        data.forEach(item => {
+            formattedData[item.symbol] = {
+                next_close_prediction: item.next_close_prediction,
+                next_week_prediction: item.next_week_prediction,
+                next_biweek_prediction: item.next_biweek_prediction,
+                next_triweek_prediction: item.next_triweek_prediction,
+                next_month_prediction: item.next_month_prediction
+            };
+        });
+        //console.log(formattedData); // Log the data here if needed
+        return formattedData;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
+  }
+
+  {% comment %} for financial_report_predictions {% endcomment %}
+  async function fetchFinancialReportPredictions() {
+    try {
+        const response = await fetch("/financial_predictions/");
+        const data = await response.json();
+
+        const predictionsData = data.reduce((acc, cur) => {
+            acc[cur.symbol] = cur.prediction;
+            return acc;
+        }, {});
+
+        return predictionsData; // Assign fetched data to news_predictions
+
+        // Perform any operations that rely on news_predictions here
+        //console.log(news_predictions);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+  }
+
+  // Define global variables to store predictions data
+  let news_predictions;
+  let historical_predictions;
+  let financial_report_predictions;
+
+  async function fetchData() {
+    try {
+      // Fetch news predictions and historical predictions
+      [news_predictions, historical_predictions, financial_report_predictions] = await Promise.all([
+        fetchNewsPredictions(),
+        fetchHistoricalPredictions(),
+        fetchFinancialReportPredictions()
+      ]);
+
+      // Once data is fetched, you can proceed with using it
+      //console.log("News Predictions:", news_predictions);
+      //console.log("Historical Predictions:", historical_predictions);
+
+      // Now you can perform further operations using the fetched data
+
+      // Continue with the rest of your script...
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle errors appropriately
+    }
+  }
+
+  // Call the fetchData function when the page loads
+  document.addEventListener("DOMContentLoaded", fetchData);
+
 </script>
 
 {% comment %} third script {% endcomment %}
 <script>
   const apiUrl2 = 'https://financialmodelingprep.com/api/v3/quote-order/';
   //const apiKey2 = 'DZdHINhAKeEnsE6yDLBYFVI9lWOvPcLI';
-  const apiKey2 = '0f08f20f61c268804f9e94f55246c81a';
-  //const apiKey2 = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
-  
+  //const apiKey2 = '0f08f20f61c268804f9e94f55246c81a';
+  const apiKey2 = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
 
   // Function to get the NowPrice of a symbol
   function getNowPriceOut(symbol) {
@@ -420,52 +537,88 @@
   }
 
   async function handleSellConfirmation() {
+    document.getElementById('spinner').style.display = 'block';
+    
     const plans = JSON.parse(localStorage.getItem('stockDataArray')) || [];
 
-    const wantedPlan = plans.find((plan)=> Number(plan.ID) == Number(PlanID));
-    console.log(wantedPlan);
+    const wantedPlan = plans.find((plan) => Number(plan.ID) === Number(PlanID));
+    if (!wantedPlan || !wantedPlan.data || wantedPlan.data.length === 0) {
+        console.error('No valid data found in the plan.');
+        return;
+    }
+
     let returnedValue = 0;
 
-    await Promise.all(wantedPlan.data.map(async (stock) => {
-      const nowPrice = await getNowPriceOut(stock.symbol);
-      const totalPrice = stock.shares * nowPrice;
-      returnedValue += totalPrice;
-      localStorage.setItem('wallet_sure', totalPrice);
-    }));
-    console.log("Returned Value = " + returnedValue);
-    const wallet = localStorage.getItem('wallet')||0;
-    const newWalletValue = (Number(wallet)+returnedValue).toFixed(2);
-    localStorage.setItem('wallet', newWalletValue);
-    update_wallet(newWalletValue);
+    try {
+        await Promise.all(wantedPlan.data.map(async (stock) => {
+            try {
+                const nowPrice = await getNowPriceOut(stock.symbol);
+                const totalPrice = stock.shares * nowPrice;
+                returnedValue += totalPrice;
+                localStorage.setItem('wallet_sure', totalPrice);
+            } catch (error) {
+                console.error(`Error fetching current price for stock ${stock.symbol}:`, error);
+            }
+        }));
+    } catch (error) {
+        console.error('Error processing stock data:', error);
+    }
 
-    const newPlans = plans.filter((plan)=>{
-      if(Number(plan.ID) != Number(PlanID))
-        return plan;
-    })
-    localStorage.setItem("stockDataArray", JSON.stringify(newPlans));
-    update_plans(newPlans)
+    console.log("Returned Value = " + returnedValue);
+
+    const wallet = localStorage.getItem('wallet') || 0;
+    const newWalletValue = (Number(wallet) + returnedValue).toFixed(2);
+    localStorage.setItem('wallet', newWalletValue);
+    console.log("Updated Wallet Value = " + newWalletValue);
+
+    try {
+        // Update wallet first
+        await update_wallet(newWalletValue);
+        console.log("Wallet updated succsessfuly");
+
+        // Then update plans
+        const newPlans = plans.filter((plan) => Number(plan.ID) !== Number(PlanID));
+        localStorage.setItem("stockDataArray", JSON.stringify(newPlans));
+        await update_plans(newPlans);
+        console.log(newPlans)
+        console.log("Plans updated succsessfuly");
+
+    } catch (error) {
+        console.error('Error updating wallet or plans:', error);
+        return;
+    }
+
+    // Reload the location after both update_wallet and update_plans finish
+    console.log("Reloading the page!!!")
     location.reload();
   }
 
-  function toggleCardVisibility(CardID){
+  async function toggleCardVisibility(CardID) {
     const cards = JSON.parse(localStorage.getItem('stockDataArray')) || [];
 
     const newCards = cards.map((card) => {
-      if (Number(card.ID) === Number(CardID)) {
-        if(card.Appearance == "block")
-          card.Appearance = "none";
-        else
-          card.Appearance = "block";
-      }
-      return card;
+        if (Number(card.ID) === Number(CardID)) {
+            if (card.Appearance == "block")
+                card.Appearance = "none";
+            else
+                card.Appearance = "block";
+        }
+        return card;
     });
+    
+    document.getElementById('spinner').style.display = 'block';
+
     console.log(newCards);
     localStorage.setItem("stockDataArray", JSON.stringify(newCards));
-    update_plans(newCards)
-    
-    location.reload();
-
+    try {
+        await update_plans(newCards);
+        location.reload();
+    } catch (error) {
+        console.error(error);
+        // Handle errors if needed
+    }
   }
+
 
   function toggleHiddenCardsVisibility(){
     const HiddenCards = document.getElementById('HiddenCards');
@@ -599,14 +752,36 @@
                 // Update modal content with the sum of prices
                 /*_____________________________________________________________________________________________*/
                 modalContent.innerHTML = `
-                    <p><b>Stocks:</b> ${symbolsString}</p>
-                    <p><b>Start Date: </b>${data.FromDate}</p>
-                    <p><b>Expected Selling Date: </b>${data.DueDate}</p>
-                    <p><b>Initial Amount: </b>$${data.Budget}</p>
-                    <p><b>Total Price Now: </b>$${sumOfPrices.toFixed(2)}</p>
-                    <p><b>Shares per stock: </b>${symbolsString_WithShares}</p>
-                    <p><b>Total Prediction: </b>$${data.FinalAmount}</p>
-
+                  <div>
+                    <table class="table">
+                      <tbody>
+                          <tr>
+                              <td><b>Stocks:</b></td>
+                              <td>${symbolsString}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Start Date:</b></td>
+                              <td>${data.FromDate}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Expected Selling Date:</b></td>
+                              <td>${data.DueDate}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Initial Amount:</b></td>
+                              <td>$${data.Budget}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Current Total Price:</b></td>
+                              <td>$${sumOfPrices.toFixed(2)}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Shares per stock:</b></td>
+                              <td>${symbolsString_WithShares}</td>
+                          </tr>
+                      </tbody>
+                  </table>
+                </div>
 
                 `;
                 /*_____________________________________________________________________________________________*/
@@ -617,25 +792,69 @@
                     const uniqueId = `tradingview_${stock.symbol}`;
                     const widgetContainer = document.createElement('div');
                     widgetContainer.classList.add('tradingview-widget-container', 'my-widget-container'); // Add a custom class for styling
-                    widgetContainer.style.height = '650px';
+                    widgetContainer.style.height = '1000px';
                     widgetContainer.style.width = '100%';
+                    widgetContainer.style.marginBottom = '30px'; // Add margin-bottom for space
                 /*_____________________________________________________________________________________________*/
                     widgetContainer.innerHTML = `
-                        <br>
-                        <div class="container">
-                          <h2>${counter+1}. Symbol: ${stock.symbol}</h2>
-                          <p>Shares: ${stock.shares}</p>
-                          <p>Initial Price: $${stock.price}</p>               
-                          <p>Initial SharesxPrice: ${stock.shares} x ($${stock.price}) = $${stock.shares*stock.price}</p>
-                          <p>Total Price Now: $${stock.shares*stock.price}</p>
-                          <p>Price Now: $${S_prices[counter++]}</p>
-                          <p>Prediction: $${stock.finalPrice}</p>
-
-
-                          <div class="tradingview-widget-container" style="height: 500px; width: 100%;">
-                            <div id="${uniqueId}" style="height: 100%; width: 100%;"></div>
-                          </div>
-                        </div>
+                        <div>
+                          <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        <h2>${counter+1}. Symbol: ${stock.symbol}</h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Shares:</td>
+                                    <td>${stock.shares}</td>
+                                </tr>
+                                <tr>
+                                    <td>Initial Share Price:</td>
+                                    <td>$${stock.price}</td>
+                                </tr>
+                                <tr>
+                                  <td>Current Share Price:</td>
+                                  <td>$${S_prices[counter++]}</td>
+                                </tr>
+                                <tr>
+                                    <td>Initial Total Price:</td>
+                                    <td>${stock.shares} x ($${stock.price}) = $${stock.shares * stock.price}</td>
+                                </tr>
+                                <tr>
+                                    <td>Current Total Price:</td>
+                                    <td>$${stock.shares * stock.price}</td>
+                                </tr>
+                                <!-- UTRADE Predictions -->
+                                <tr>
+                                    <td colspan="2"><strong>UTRADE Predictions:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Prediction At The Selling Date:</td>
+                                    <td>${checkNumber(stock.prediction)}</td>
+                                </tr>
+                                <tr>
+                                  <td>Current Price Prediction:</td>
+                                  <td>${checkNumber2(checkNewsPrediction(stock.symbol))}</td>
+                                </tr>
+                                <tr>
+                                  <td>Next Close Price Direction:</td>
+                                  <td>${checkNumber2(historical_predictions[stock.symbol]["next_close_prediction"])}</td>
+                                </tr>
+                                <tr>
+                                  <td>Next Week Price Direction:</td>
+                                  <td>${checkNumber2(historical_predictions[stock.symbol]["next_week_prediction"])}</td>
+                                </tr>
+                                <tr>
+                                  <td>Next Month Price Direction:</td>
+                                  <td>${checkNumber2(checkMonth(stock.symbol))}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                      <div class="tradingview-widget-container" style="height: 470px; width: 100%;">
+                          <div id="${uniqueId}" style="height: 100%; width: 100%;"></div>
+                      </div>
                     `;
                 /*_____________________________________________________________________________________________*/
 
@@ -685,8 +904,8 @@
 
       const apiUrl = 'https://financialmodelingprep.com/api/v3/quote-order/';
       //const apiKey = 'DZdHINhAKeEnsE6yDLBYFVI9lWOvPcLI';
-      const apiKey = '0f08f20f61c268804f9e94f55246c81a';
-      //const apiKey = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
+      //const apiKey = '0f08f20f61c268804f9e94f55246c81a';
+      const apiKey = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
       // Function to get the NowPrice of a symbol
       function getNowPrice(symbol) {
         return fetch(`${apiUrl}${symbol}?apikey=${apiKey}`)
@@ -735,50 +954,88 @@
   }).catch(function (error) {
     console.error('Error in first script:', error);
   });
+
+
+  function checkNumber(prediction_num) {
+    if (prediction_num > 0) {
+        return '<span style="color: green;">increase</span>';
+    } else if (prediction_num < 0) {
+        return '<span style="color: red;">decrease</span>';
+    } else {
+        return 'The anticipated trend for the stock price does not indicate a change at the selected selling date.';
+    }
+  }
+
+  function checkNumber2(prediction_num) {
+    if (prediction_num > 0) {
+        return '<span style="color: green;">increase</span>.';
+    } else if (prediction_num < 0) {
+        return '<span style="color: red;">decrease</span>.';
+    } else {
+        return 'The anticipated trend for the stock price does not indicate a change.';
+    }
+  }
+
+  function checkNewsPrediction(symbol) {
+
+    if(Number(news_predictions[symbol]) == 0)
+      return Number(historical_predictions[symbol]["next_close_prediction"])
+    else
+      return Number(news_predictions[symbol])
+  }
+
+  function checkMonth(symbol){
+    if(historical_predictions[symbol]["next_month_prediction"] == financial_report_predictions[symbol]){
+      return historical_predictions[symbol]["next_month_prediction"];
+    }else{
+      return 0;
+    }
+  }
+
 </script>
 
 {% comment %} fourth script {% endcomment %}
 <!-- WALLET SCRIPT -->
 <script>
-makeAjaxRequest_wallet().then(function () {
+  makeAjaxRequest_wallet().then(function () {
 
-  //document.addEventListener("DOMContentLoaded", function () {
-      const wallet = localStorage.getItem('wallet')||0;
+    //document.addEventListener("DOMContentLoaded", function () {
+        const wallet = localStorage.getItem('wallet')||0;
 
-      document.getElementById('wallet').innerText = Number(wallet).toFixed(2);
+        document.getElementById('wallet').innerText = Number(wallet).toFixed(2);
 
-      document.getElementById('NO_BTN').addEventListener('click', () => {
-          document.getElementById('saveButton').style.display = 'none';
-      });
+        document.getElementById('NO_BTN').addEventListener('click', () => {
+            document.getElementById('saveButton').style.display = 'none';
+        });
 
-      // Add click event to the edit button
-      document.getElementById('editButton').addEventListener('click', function () {
-          var current_wallet = document.getElementById('wallet');
+        // Add click event to the edit button
+        document.getElementById('editButton').addEventListener('click', function () {
+            var current_wallet = document.getElementById('wallet');
 
-          // Make the content editable
-          current_wallet.contentEditable = true;
-          current_wallet.focus();
+            // Make the content editable
+            current_wallet.contentEditable = true;
+            current_wallet.focus();
 
-          // Show the save button
-          document.getElementById('saveButton').style.display = 'inline';
-      });
+            // Show the save button
+            document.getElementById('saveButton').style.display = 'inline';
+        });
 
-      // Add click event to the save button
-      document.getElementById('saveButton').addEventListener('click', function () {
-          // Show the edit modal
-          let now_wallet = document.getElementById('wallet').innerText;
-          console.log(now_wallet);
-          if (Number(wallet) !== Number(now_wallet)) {
-              var editModal = new bootstrap.Modal(document.getElementById('editModal'), {});
-              editModal.show();
-          } else {
-              document.getElementById('saveButton').style.display = 'none';
-          }
+        // Add click event to the save button
+        document.getElementById('saveButton').addEventListener('click', function () {
+            // Show the edit modal
+            let now_wallet = document.getElementById('wallet').innerText;
+            console.log(now_wallet);
+            if (Number(wallet) !== Number(now_wallet)) {
+                var editModal = new bootstrap.Modal(document.getElementById('editModal'), {});
+                editModal.show();
+            } else {
+                document.getElementById('saveButton').style.display = 'none';
+            }
 
-      });
+        });
 
-      // Listen for the confirmEdit button click
-      document.getElementById('confirmEdit').addEventListener('click', function () {
+        // Event listener function
+        document.getElementById('confirmEdit').addEventListener('click', async function () {
           var current_wallet = document.getElementById('wallet');
 
           // Disable content editing
@@ -786,26 +1043,35 @@ makeAjaxRequest_wallet().then(function () {
 
           // Save the new value to localStorage
           var newValue = current_wallet.innerText;
-          const new_Wallet_Value = isNaN(Number(newValue))? 0 : Number(newValue)
+          const new_Wallet_Value = isNaN(Number(newValue))? 0 : Number(newValue);
           localStorage.setItem('wallet', new_Wallet_Value);
-          update_wallet(new_Wallet_Value);
 
-          // If the new value is empty, revert to the original value
-          if (newValue.trim() === '') {
-              current_wallet.innerText = originalValue;
+          try {
+              // Update wallet asynchronously and wait for it to finish
+              document.getElementById('spinner').style.display = 'block';
+              await update_wallet(new_Wallet_Value);
+              document.getElementById('spinner').style.display = 'none';
+
+              // If the new value is empty, revert to the original value
+              if (newValue.trim() === '') {
+                  current_wallet.innerText = originalValue;
+              }
+
+              // Hide the save button
+              document.getElementById('saveButton').style.display = 'none';
+
+              // Close the modal
+              var editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+              editModal.hide();
+          } catch (error) {
+              console.error('Error updating wallet:', error);
+              // Handle error here if needed
           }
+        });
+    //});
 
-          // Hide the save button
-          document.getElementById('saveButton').style.display = 'none';
-
-          // Close the modal
-          var editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-          editModal.hide();
-      });
-  //});
-
-}).catch(function (error) {
-  console.error('Error in first script:', error);
-});
+  }).catch(function (error) {
+    console.error('Error in first script:', error);
+  });
 </script>
 {% endblock content2 %}

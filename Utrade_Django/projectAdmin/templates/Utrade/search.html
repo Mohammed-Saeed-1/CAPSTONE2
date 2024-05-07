@@ -6,6 +6,14 @@
 {% block content %}
 <style>
   /* Custom CSS for table styling */
+
+  #spinnerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .symbol {
       font-weight: bold;
   }
@@ -37,6 +45,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <main id="main" class="main">
+
+  <div id="spinnerContainer">
+    <div id="spinner" class="spinner-border text-primary" role="status"></div>
+  </div>
+
   <div class="pagetitle">
     <h1>Stocks</h1>
     <nav>
@@ -106,17 +119,23 @@
         
         // Initialize the favoriteStocks array with values from DB, if available
         let favoriteStocks = []
-        $.ajax({
-            type: 'GET',
-            url: '/get_favorite_stocks/',
-            success: function (response) {
-                favoriteStocks = response.favorite_stocks;
-                console.log(favoriteStocks)
-            },
-            error: function (error) {
-                console.error(error);
-            }
-        });
+        function fetchFavoriteStocks() {
+          return new Promise((resolve, reject) => {
+              $.ajax({
+                  type: 'GET',
+                  url: '/get_favorite_stocks/',
+                  success: function (response) {
+                      favoriteStocks = response.favorite_stocks;
+                      console.log(favoriteStocks);
+                      resolve(); // Resolve the promise when successful
+                  },
+                  error: function (error) {
+                      console.error(error);
+                      reject(error); // Reject the promise on error
+                  }
+              });
+          });
+        }
         {% comment %} console.log(favoriteStocks) {% endcomment %}
 
 
@@ -173,6 +192,7 @@
 
         // Function to fetch and display data from the API
         function fetchTechStocks() {
+          //const apiKey = 'FnmypkCJXo2N0ejSmZDeyXgJIvKAFVS8';
           const apiKey = '0f08f20f61c268804f9e94f55246c81a';
           //const apiKey = 'k0wOZwaeBqPBeeutNskntC6QdhCCK4WY';
           const symbols = ["AAPL", "MSFT", "GOOG", "AMZN", "NVDA", "META", "TSLA", "BABA", "CRM", "AMD", "INTC", "ATVI", "PYPL", "TTD", "EA", "MTCH", "ZG", "YELP"];
@@ -209,11 +229,19 @@
         }
 
         // Call the function to load data when the page loads
-        window.onload = function () {
-            fetchTechStocks();
-            // Also, update the heart icons based on the stored favoriteStocks
-            updateFavoriteIcons();
-        };
+        $(document).ready(async function() {
+          try {
+              await fetchFavoriteStocks();
+              fetchTechStocks();
+              
+              // Also, update the heart icons based on the stored favoriteStocks
+              updateFavoriteIcons();
+              document.getElementById('spinner').style.display = 'none';
+          } catch (error) {
+              console.error('Error fetching favorite stocks:', error);
+          }
+      });
+      
 
         // Function to update heart icons based on the favoriteStocks array
         function updateFavoriteIcons() {

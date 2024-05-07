@@ -34,3 +34,39 @@ class StockData(models.Model):
 
     def __str__(self):
         return f"{self.stock} - {self.Date}"
+    
+
+
+#news_predictions      (step 1) the class name should be the same existing table name
+class NewsPrediction(models.Model):
+    symbol = models.CharField(max_length=6, primary_key=True)
+    prediction = models.DecimalField(max_digits=3, decimal_places=2)
+    time = models.TimeField()
+
+    class Meta:
+        db_table = 'news_predictions'
+        managed = False  # Set managed to False to prevent Django from creating or deleting the table
+
+#Financial_report_predictions
+class FinancialReportPrediction(models.Model):
+    symbol = models.CharField(max_length=6, primary_key=True)
+    prediction = models.DecimalField(max_digits=5, decimal_places=2)
+
+    class Meta:
+        db_table = 'financial_report_predictions'
+        managed = False
+
+
+
+#Historical predictions
+class HistoricalPrediction(models.Model):
+    symbol = models.CharField(max_length=6, primary_key=True)
+    next_close_prediction = models.IntegerField(default=0)
+    next_week_prediction = models.IntegerField(default=0)
+    next_biweek_prediction = models.IntegerField(default=0)
+    next_triweek_prediction = models.IntegerField(default=0)
+    next_month_prediction = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'predictions'
+        managed = False

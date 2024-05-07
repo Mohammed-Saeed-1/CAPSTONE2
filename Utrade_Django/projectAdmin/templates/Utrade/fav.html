@@ -5,6 +5,12 @@
 
 {% block content %}
 <style>
+    #spinnerContainer {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
     .buttons {
         background-color: #2880df;
         color: white;
@@ -28,6 +34,10 @@
     
 </script>
 <main id="main" class="main">
+
+    <div id="spinnerContainer">
+        <div id="spinner" class="spinner-border text-primary" role="status"></div>
+    </div>
 
     <div class="pagetitle">
         <h1>Favorite</h1>
@@ -56,6 +66,7 @@
                 url: '/get_favorite_stocks/',
                 success: function (response) {
                     favoriteStocks = response.favorite_stocks;
+                    document.getElementById('spinner').style.display = 'none';
                     
                     favoriteStocks.forEach(symbol => {
                         symbolTarget = symbol+"T";
