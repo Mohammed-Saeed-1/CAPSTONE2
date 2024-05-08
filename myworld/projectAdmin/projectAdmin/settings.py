@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-pelv514gt56b88!y-dsrl!=m!*0p5r#*&1)^-0-ksx*pui3^h2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["utradepro.com", "www.utradepro.com"]
+ALLOWED_HOSTS = ["utradepro.com", "www.utradepro.com", "127.0.0.1"]
 #to avoid CSRF Trust warning
 CSRF_TRUSTED_ORIGINS = ['https://utradepro.com']
 
