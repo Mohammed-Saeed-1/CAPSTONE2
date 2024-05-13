@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["utradepro.com", "www.utradepro.com", "127.0.0.1", "localhost", "0.0.0.0", "127.0.0.0","172.0.0.0", "172.0.0.1", "*"]
 #to avoid CSRF Trust warning
-CSRF_TRUSTED_ORIGINS = ['https://utradepro.com']
+CSRF_TRUSTED_ORIGINS = ["https://utradepro.com", "https://www.utradepro.com"]
 
 # example '192.168.137.1'
 
