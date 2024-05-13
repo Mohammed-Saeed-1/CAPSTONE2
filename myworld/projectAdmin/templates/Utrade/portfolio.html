@@ -829,19 +829,15 @@
                                 <!-- UTRADE Predictions -->
                                 <tr>
                                     <td colspan="2"><strong>UTRADE Predictions:</strong><br>
-                                    <strong><span style="color: #FFD700;">Due to the market unpredictability and volatility, please note that these predictions are not always guaranteed to be accurate!</span></strong>
+                                    <strong><span style="color: gray;">Due to the market unpredictability and volatility, please note that these predictions are not always guaranteed to be accurate!</span></strong>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Prediction At The Selling Date:</td>
-                                    <td>${checkNumber(stock.prediction)}</td>
-                                </tr>
-                                <tr>
-                                  <td>Current Price Prediction:</td>
+                                  <td>Market Gossip:</td>
                                   <td>${checkNumber2(checkNewsPrediction(stock.symbol))}</td>
                                 </tr>
                                 <tr>
-                                  <td>Next Close Price Direction:</td>
+                                  <td>Today's Closing Price Direction:</td>
                                   <td>${checkNumber2(historical_predictions[stock.symbol]["next_close_prediction"])}</td>
                                 </tr>
                                 <tr>
@@ -851,6 +847,10 @@
                                 <tr>
                                   <td>Next Month Price Direction:</td>
                                   <td>${checkNumber2(checkMonth(stock.symbol))}</td>
+                                </tr>
+                                <tr>
+                                  <td>Prediction At The Selling Date:</td>
+                                  <td>${checkNumber(stock.prediction)}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -961,21 +961,21 @@
 
   function checkNumber(prediction_num) {
     if (prediction_num > 0) {
-        return '<span style="color: green;">increase</span>';
+        return '<strong><span style="color: green;">UP</span></strong>';
     } else if (prediction_num < 0) {
-        return '<span style="color: red;">decrease</span>';
+        return '<strong><span style="color: red;">Down</ownspan></strong>';
     } else {
-        return 'The anticipated trend for the stock price does not indicate a change at the selected selling date.';
+        return '<strong>No Change</strong>';
     }
   }
 
   function checkNumber2(prediction_num) {
     if (prediction_num > 0) {
-        return '<span style="color: green;">increase</span>.';
+        return '<strong><span style="color: green;">Up</span></strong>';
     } else if (prediction_num < 0) {
-        return '<span style="color: red;">decrease</span>.';
+        return '<strong><span style="color: red;">Down</span>.</strong>';
     } else {
-        return 'The anticipated trend for the stock price does not indicate a change.';
+        return '<strong>No Change</strong>';
     }
   }
 
