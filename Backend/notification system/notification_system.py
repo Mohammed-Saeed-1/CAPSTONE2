@@ -154,7 +154,7 @@ def get_users_data():
 def get_plans_data():
     try:
         # Execute the SQL query
-        mycursor.execute("SELECT user_id, plans FROM utrade_userprofile")
+        mycursor.execute("SELECT user_id, plans FROM UTRADE_userprofile")
         
         # Fetch all rows
         rows = mycursor.fetchall()
@@ -164,19 +164,22 @@ def get_plans_data():
         print(f"Error fetching data: {e}")
         return []
 
-# for optimization
+# For optimization
 if existing_notification:
-
-    # Example usage
     users_data = get_users_data()
     users_plans = get_plans_data()
 
-
+    users_dict = {user[0]: user[1] for user in users_data}
     users = []
-    for i in range(len(users_data)):
-        plans_json = users_plans[i][1]
 
-        # Parse JSON string
+    for plan in users_plans:
+        user_id = plan[0]
+        plans_json = plan[1]
+        print("Plans JSON:", plans_json)  # Add this line for debugging
+
+        if not plans_json:
+            continue
+
         plans = json.loads(plans_json)
 
         # Set to store unique symbols
@@ -192,11 +195,11 @@ if existing_notification:
         else:
             unique_symbols = list(unique_symbols)
 
-        users.append([users_data[i][1], unique_symbols])
+        if user_id in users_dict:
+            users.append([users_dict[user_id], unique_symbols])
 
-    # print(users)
-
-
+    # Print users for debugging
+    print(users)
 
     for stock in symbols_to_notified:
         symbol = stock[0]
@@ -208,12 +211,11 @@ if existing_notification:
             for user in users:
                 if symbol in user[1]:
                     send_for_emails.append(user[0])
-            if price_precent_change > 0:    
+            if price_precent_change > 0:
                 message = f"Dear valued customer,\n\nWe'd like to inform you that there has been a significant change in the stock price of {symbol}, one of the stocks you are tracking. The current price has increased by {price_precent_change}%.\n\nPlease review your investment strategy accordingly.\n\nBest regards,\nUTRADE"
-                
             else:
                 message = f"Dear valued customer,\n\nWe'd like to inform you that there has been a significant change in the stock price of {symbol}, one of the stocks you are tracking. The current price has decreased by {abs(price_precent_change)}%.\n\nPlease review your investment strategy accordingly.\n\nBest regards,\nUTRADE"
-            
+
             subject = f"Stock Price Alert: {symbol}"
 
             send_email(send_for_emails, message, subject)
